@@ -1,0 +1,33 @@
+the structure would be something the devs would make but a sample would be something like this:
+example would be something like this:
+ 
+Json Array: Containing Input and Output, // is comment
+ 
+[{ // Input Json
+    "testCase" : "testCaseIdentifier",
+     "isInput": "Y",
+    "value": {
+    "carrierId": "UHPMEDD",
+    "accountId": "H2962",
+    "groupId": "029",
+    "memberId": "UL0031976"
+///... more fields can be added
+    },
+{ /// Expected Output Json
+    "testCase" : "testCaseIdentifier",
+     "isInput": "N", 
+    "value": {
+    "RxM3PCarrierId": "UHPMEDD",
+    "RxM3PAccountId": "H2962",
+    "RxM3PIndividualId": "029",
+/// ... more fields can be added
+    }
+}]
+ 
+Headers:
+ 
+http://localhost:8080/sample/api?targetTopic=ocep_kafka-nonprod-ocep-m3p-client-sot-api-billstat-qa&sourceTopic=ocep_kafka-nonprod-ocep-m3p-output-topic&aepSchemaName=aepName
+ 
+sourceTopic
+targetTopic
+aepSchemaName
