@@ -1,3 +1,78 @@
+Week 1: Excel Parsing Foundation
+
+Focus: Set up environment and develop a Python script to parse the OAH "Business Rule" Excel sheet and extract basic field information (columns: "Benefit Central", "Rx BC Demographics", "Data Type", "Description").
+
+Key Deliverables:
+
+Python environment setup complete.
+
+Python script to load Excel and extract basic columns.
+
+Initial JSON output structure (skeleton) for extracted rules.
+
+Week 2: NLP Rule Extraction - Basic Rule Types
+
+Focus: Implement rule-based NLP in Python to parse the "Description" column and extract basic validation rules (Mandatory/Optional, Data Type).
+
+Key Deliverables:
+
+NLP library setup (spaCy or NLTK).
+
+Python logic to extract "mandatory" and "optional" rules using NLP keywords.
+
+JSON output updated to include basic mandatory/optional rules for each field.
+
+Week 3: Test Case Suggestion - Rule-Based
+
+Focus: Develop Python logic to automatically suggest basic test cases based on the extracted rules (Mandatory/Optional).
+
+Key Deliverables:
+
+Python function to generate test case suggestions based on rules.
+
+Rule-based logic implemented for suggesting test cases related to mandatory and optional fields.
+
+Output of suggested test cases (printed to console or saved to a file).
+
+Week 4: Test Data Generation - Basic Data Types & Mandatory Rules
+
+Focus: Develop Python logic to generate basic test data samples that adhere to extracted data types (String, Date initially) and mandatory rules.
+
+Key Deliverables:
+
+Python function to generate basic test data samples.
+
+Data generation logic for String and Date data types, enforcing mandatory rules.
+
+Output of test data samples in JSON format (printed to console or saved to files).
+
+Week 5: Rule Refinement & Expanded Data Types
+
+Focus: Refine NLP rule extraction for more complex rules and expand test data generation to handle more data types and negative scenarios.
+
+Key Deliverables:
+
+Enhanced NLP rule extraction to handle more varied rule descriptions.
+
+Expanded test data generation logic to cover more data types (e.g., "object", numeric - if relevant from Excel) and format validations.
+
+Implementation of negative test data generation (data violating rules).
+
+Week 6: Documentation, Code Cleanup, and Demo Prep
+
+Focus: Finalize code, document the POC, and prepare for demonstration.
+
+Key Deliverables:
+
+Well-documented Python code (for all scripts: parsing, test case generation, test data generation).
+
+Concise POC documentation summarizing approach, findings, and limitations.
+
+POC demonstration materials (slides, demo script) to showcase functionality.
+
+Brief POC report summarizing the work and next steps.
+
+
 the structure would be something the devs would make but a sample would be something like this:
 example would be something like this:
  
