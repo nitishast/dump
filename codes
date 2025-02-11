@@ -10,3 +10,29 @@ pip install pandas openpyxl faker requests pyyaml google-generativeai
 gemini_api_key: "YOUR_GEMINI_API_KEY"
 openai_api_key: "YOUR_OPENAI_API_KEY"
 deployment_api_url: "https://deployment-team-api.com/submit"
+
+test_automation_project/
+│── data/                     # Store raw & processed Excel files, test data, and API responses
+│   ├── raw_requirements.xlsx  # Original Excel file
+│   ├── processed_rules.json   # Parsed validation rules
+│   ├── generated_test_cases.json  # Test cases from LLM
+│   ├── generated_test_data.json   # Test data for ingestion
+│── src/                      # Main Python scripts
+│   ├── parse_excel.py         # Extract rules from Excel
+│   ├── generate_test_cases.py # Call LLM (Gemini/OpenAI) for test case generation
+│   ├── generate_test_data.py  # Use Faker/random to create test data
+│   ├── submit_to_api.py       # Send test data JSON to deployment API
+│   ├── monitor_results.py     # Monitor & validate API responses
+│── notebooks/                 # Jupyter Notebooks for testing & debugging
+│   ├── analysis.ipynb         # For manual validation & exploration
+│── config/                    # Configuration files
+│   ├── settings.yaml          # API keys, Kafka topic names, endpoints, etc.
+│── logs/                      # Store logs for debugging
+│   ├── test_execution.log     # Logs for API calls, errors, and validations
+│── reports/                   # Store generated reports
+│   ├── validation_report.csv  # Test case execution summary
+│── tests/                     # Unit tests for validation
+│   ├── test_parsing.py        # Test Excel parsing logic
+│   ├── test_data_gen.py       # Test test-data generation functions
+│── requirements.txt           # Dependencies (pandas, openpyxl, faker, requests, etc.)
+│── README.md  
