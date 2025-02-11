@@ -1,0 +1,12 @@
+mkdir test_automation_project && cd test_automation_project
+mkdir data src notebooks config logs reports tests
+touch requirements.txt README.md config/settings.yaml
+
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+pip install pandas openpyxl faker requests pyyaml google-generativeai
+
+gemini_api_key: "YOUR_GEMINI_API_KEY"
+openai_api_key: "YOUR_OPENAI_API_KEY"
+deployment_api_url: "https://deployment-team-api.com/submit"
