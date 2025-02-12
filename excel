@@ -1,0 +1,159 @@
+import pandas as pd
+import json
+import yaml
+
+def load_config(config_path="config/settings.yaml"):
+    """Loads configuration from a YAML file."""
+    try:
+        with open(config_path, "r") as f:
+            return yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: Config file not found at {config_path}")
+        return None
+    except yaml.YAMLError as e:
+        print(f"Error parsing config file: {e}")
+        return None
+
+
+def preprocess_excel(file_path, sheet_name):
+    """Preprocess the Excel file."""
+    try:
+        df = pd.read_excel(file_path, sheet_name=sheet_name)
+
+        # Rename columns to remove leading/trailing spaces
+        df.columns = df.columns.str.strip()
+
+        # Detect column indices dynamically
+        rx_bc_col = None
+        benefit_central_col = None
+        data_type_col = None
+        description_col = None
+
+        for i, col in enumerate(df.columns):
+            col_lower = col.lower()
+            if "rx bc" in col_lower:
+                rx_bc_col = i
+            elif "benefit central" in col_lower:
+                benefit_central_col = i
+            elif "data type" in col_lower:
+                data_type_col = i
+            elif "description" in col_lower:
+                description_col = i
+
+        if rx_bc_col is None or benefit_central_col is None or data_type_col is None or description_col is None:
+            raise ValueError("Could not automatically detect required columns.  "
+                             "Please ensure columns with 'Rx BC', 'Benefit Central', 'Data Type', "
+                             "and 'Description' exist in the Excel sheet.")
+
+        # Step 1: Fill down the "Rx BC" category
+        df.iloc[:, rx_bc_col] = df.iloc[:, rx_bc_col].ffill()
+
+        # Step 2: Identify rows where 'Benefit Central' is 'object'
+        object_rows = df.iloc[:, benefit_central_col].astype(str).str.lower() == 'object'
+
+        # Store object descriptions
+        object_descriptions = {}
+        for index, row in df[object_rows].iterrows():
+            rx_bc_value = row.iloc[rx_bc_col]
+            object_descriptions[rx_bc_value] = row.iloc[description_col]
+
+        # Step 3: Remove rows where 'Benefit Central' is 'object'
+        df = df[~object_rows]
+
+        return df, object_descriptions
+
+    except Exception as e:
+        print(f"Error preprocessing Excel file: {e}")
+        return None, None
+
+
+def extract_rules_from_dataframe(df, object_descriptions):
+    """Extract rules from the cleaned dataframe, creating a hierarchical JSON structure,
+       using dynamically detected column indices.
+    """
+    try:
+        # Detect column indices dynamically
+        rx_bc_col = None
+        benefit_central_col = None
+        data_type_col = None
+        description_col = None
+
+        for i, col in enumerate(df.columns):
+            col_lower = col.lower()
+            if "rx bc" in col_lower:
+                rx_bc_col = i
+            elif "benefit central" in col_lower:
+                benefit_central_col = i
+            elif "data type" in col_lower:
+                data_type_col = i
+            elif "description" in col_lower:
+                description_col = i
+
+        extracted_rules = {}
+        for _, row in df.iterrows():
+            parent_field = str(row.iloc[rx_bc_col]).strip()
+            field_name = str(row.iloc[benefit_central_col]).strip()
+            data_type = str(row.iloc[data_type_col]).strip() if pd.notna(row.iloc[data_type_col]) else "String"
+            description = str(row.iloc[description_col]).strip() if pd.notna(row.iloc[description_col]) else ""
+
+            if parent_field not in extracted_rules:
+                extracted_rules[parent_field] = {
+                    "description": object_descriptions.get(parent_field, ""),
+                    "fields": {}
+                }
+
+            if field_name not in extracted_rules[parent_field]["fields"]:
+                extracted_rules[parent_field]["fields"][field_name] = {
+                    "data_type": data_type,
+                    "required": "mandatory" in description.lower(),
+                    "description": description,
+                    "constraints": []
+                }
+            else:
+                # Append description if field already exists (handles duplicate fields)
+                extracted_rules[parent_field]["fields"][field_name]["description"] += "\n" + description
+
+        return extracted_rules
+
+    except Exception as e:
+        print(f"Error extracting rules: {e}")
+        return {}
+
+def parse_excel(config):
+    """Parses the Excel file and extracts the rules."""
+    excel_file = config.get("excel_file")
+    excel_sheet_name = config.get("excel_sheet_name")
+
+    if not excel_file or not excel_sheet_name:
+        print("Error: excel_file or excel_sheet_name not found in config.")
+        return None
+
+    df, object_descriptions = preprocess_excel(excel_file, excel_sheet_name)
+
+    if df is not None:
+        rules = extract_rules_from_dataframe(df, object_descriptions)
+        return rules
+    else:
+        return None
+
+def save_rules(rules, output_file):
+    """Saves the extracted rules to a JSON file."""
+    try:
+        with open(output_file, "w") as f:
+            json.dump(rules, f, indent=4)
+        print(f"✅ Rules extracted and saved to {output_file}")
+    except IOError as e:
+        print(f"Error saving rules to {output_file}: {e}")
+
+if __name__ == "__main__":
+    config = load_config()
+    if config is None:
+        exit()
+
+    rules = parse_excel(config)
+    if rules:
+        output_file = config.get("processed_rules_file")
+        if output_file:
+            save_rules(rules, output_file)
+        else:
+            print("Error: processed_rules_file not found in config.")
