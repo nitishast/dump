@@ -1,3 +1,8 @@
+excel_file: "data/raw_file.xlsx"
+excel_sheet_name: "BC - Business Rule"
+processed_rules_file: "data/processed_rules.json"
+
+
 import pandas as pd
 import json
 import yaml
