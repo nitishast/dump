@@ -1,0 +1,30 @@
+---
+config:
+  theme: forest
+---
+sequenceDiagram
+    actor User
+    participant UI as Web Interface
+    participant TP as Test Pipeline
+    participant KF as Kafka
+    participant VE as Validation Engine
+    participant DB as Results DB
+    User->>UI: Upload Excel
+    UI->>TP: Process Excel
+    activate TP
+    TP->>TP: Parse to JSON
+    TP->>TP: Enrich Data
+    TP->>TP: Generate Tests
+    TP->>KF: Publish Test Cases
+    deactivate TP
+    activate KF
+    KF->>VE: Stream Data
+    deactivate KF
+    activate VE
+    VE->>KF: Valid Cases
+    VE->>KF: Invalid Cases
+    VE->>DB: Store Results
+    deactivate VE
+    UI->>DB: Query Results
+    DB->>UI: Return Results
+    UI->>User: Display Dashboard
