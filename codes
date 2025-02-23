@@ -1,83 +1,91 @@
-#Chat Completion with Azure AD User Token:
-# PIP Install
-%pip install azure-identity
-%pip install openai
-%pip install langchain-openai
-%pip install load-dotenv
-
-# Import necessary libraries
+# src/llm.py
+import google.generativeai as genai
+import logging
 import openai
-import os
-from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-
-# Get Azure token
-default_credential = DefaultAzureCredential()
-access_token = default_credential.get_token("https://cognitiveservices.azure.com/.default")
-
-# Set API key from the access token
-api_key = access_token.token
-
-# Set environment variables for API key
-os.environ["api_key"] = api_key
-os.environ["AZURE_OPENAI_API_KEY"] = api_key
-
-# Define values for OpenAI endpoint, API version, deployment name, and project ID
-AZURE_OPENAI_ENDPOINT = "https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1"
-OPENAI_API_VERSION = "2024-06-01"
-DEPLOYMENT_NAME = "gpt-4o_2024-05-13"
-
-# Main function
-if __name__ == "__main__":
-    # Initialize OpenAI client
-    oai_client = openai.AzureOpenAI(
-        api_version=OPENAI_API_VERSION,
-        azure_endpoint=AZURE_OPENAI_ENDPOINT,
-        api_key=api_key,
-        azure_deployment=DEPLOYMENT_NAME,
-        default_headers={
-            "projectId": "0bef8880-4e98-413c-bc0b-41c280fd1b2a"
-        }
-    )
-
-    # Define the messages to be processed by the model
-    messages = [{"role": "user", "content": "Hi, what is prime number"}]
-
-    # Request model to process the messages
-    response = oai_client.chat.completions.create(
-        model="gpt-4o",
-        messages=messages,
-    )
-
-    # Print the response from the model
-    print(response.model_dump_json(indent=2))
+from azure.identity import DefaultAzureCredential
 
 
---
- Rules extracted and saved to data/processed-rules.json
-2025-02-23 18:05:18,168 - INFO - No environment configuration found.
-2025-02-23 18:05:18,172 - INFO - ManagedIdentityCredential will use Azure ML managed identity
-2025-02-23 18:05:18,179 - INFO - Request URL: 'http://127.0.0.1:46808/MSI/auth?api-version=REDACTED&resource=REDACTED'
-Request method: 'GET'
-Request headers:
-    'secret': 'REDACTED'
-    'User-Agent': 'azsdk-python-identity/1.17.1 Python/3.10.11 (Linux-5.15.0-1073-azure-x86_64-with-glibc2.31)'
-No body was attached to the request
-2025-02-23 18:05:18,187 - INFO - Response status: 200
-Response headers:
-    'Content-Type': 'application/json'
-    'Date': 'Sun, 23 Feb 2025 18:05:18 GMT'
-    'Transfer-Encoding': 'chunked'
-2025-02-23 18:05:18,198 - INFO - DefaultAzureCredential acquired a token from ManagedIdentityCredential
-2025-02-23 18:05:18,219 - INFO - Processing field 1/10: Rx BC Demographics.Rx BC Email
-2025-02-23 18:05:18,223 - ERROR - Exception in generate_test_cases_with_llm: 'AzureOpenAI' object has no attribute 'azure_deployment'
-2025-02-23 18:05:18,227 - ERROR - Unexpected error parsing response: 'NoneType' object has no attribute 'replace'
-2025-02-23 18:05:18,231 - WARNING - Attempt 1: Failed to generate valid test cases
-2025-02-23 18:05:18,235 - ERROR - Exception in generate_test_cases_with_llm: 'AzureOpenAI' object has no attribute 'azure_deployment'
-2025-02-23 18:05:18,239 - ERROR - Unexpected error parsing response: 'NoneType' object has no attribute 'replace'
-2025-02-23 18:05:18,243 - WARNING - Attempt 2: Failed to generate valid test cases
-2025-02-23 18:05:18,246 - ERROR - Exception in generate_test_cases_with_llm: 'AzureOpenAI' object has no attribute 'azure_deployment'
-2025-02-23 18:05:18,250 - ERROR - Unexpected error parsing response: 'NoneType' object has no attribute 'replace'
-2025-02-23 18:05:18,254 - WARNING - Attempt 3: Failed to generate valid test cases
-2025-02-23 18:05:18,258 - INFO - Processing field 2/10: Rx BC Demographics.Rx BC First Name
-2
+def initialize_llm(config):
+    """Initializes the LLM client based on the configuration."""
+    api_use = config.get("api_use", "Gemini")  # Default to Gemini if not specified
+
+    try:
+        if api_use.lower() == "gemini":
+            return _initialize_gemini(config)
+        elif api_use.lower() == "openai":
+            return _initialize_openai(config)
+        else:
+            raise ValueError(f"Unsupported API specified: {api_use}.  Must be 'Gemini' or 'OpenAI'.")
+    except Exception as e:
+        logging.error(f"Failed to initialize LLM: {str(e)}")
+        raise
+
+
+def _initialize_gemini(config):
+    """Initializes the Gemini client."""
+    try:
+        if not config.get("gemini_api_key"):
+            raise ValueError("Gemini API key not found in config")
+
+        genai.configure(api_key=config["gemini_api_key"])
+        model_name = config.get("gemini_model", "gemini-1.5-flash")
+        return genai.GenerativeModel(model_name)
+    except Exception as e:
+        logging.error(f"Failed to initialize Gemini: {str(e)}")
+        raise
+
+
+def _initialize_openai(config):
+    """Initializes the OpenAI client."""
+    try:
+        # Get Azure credentials
+        default_credential = DefaultAzureCredential()
+        access_token = default_credential.get_token("https://cognitiveservices.azure.com/.default")
+
+        if not access_token:
+            raise ValueError("Failed to obtain Azure access token")
+
+        # Initialize OpenAI client with Azure configuration
+        oai_client = openai.AzureOpenAI(
+            api_version=config.get("openai_api_version", "2024-06-01"),
+            azure_endpoint=config.get("azure_openai_endpoint",
+                                      "https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1"),
+            api_key=access_token.token,
+            azure_deployment=config.get("deployment_name", "gpt-4o_2024-05-13"),
+            default_headers={
+                "projectId": config.get("project_id", "0bef8880-4e98-413c-bc0b-41c280fd1b2a")
+            }
+        )
+        return oai_client
+    except Exception as e:
+        logging.error(f"Failed to initialize OpenAI client: {str(e)}")
+        raise
+
+
+def generate_test_cases_with_llm(llm_client, prompt, max_output_tokens=1000):
+    """Generates test cases using the appropriate LLM client."""
+    try:
+        if isinstance(llm_client, genai.GenerativeModel):
+            response = llm_client.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=max_output_tokens
+                )
+            )
+            if hasattr(response, 'text'):
+                return response.text
+            else:
+                logging.error(f"Error: LLM Response missing 'text' attribute.")
+                return None
+        elif isinstance(llm_client, openai.AzureOpenAI):
+            response = llm_client.chat.completions.create(
+                model=llm_client.azure_deployment, # Error is here - changed to deployment_name
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return response.choices[0].message.content
+        else:
+            raise ValueError("Unsupported LLM client type.")
+
+    except Exception as e:
+        logging.error(f"Exception in generate_test_cases_with_llm: {e}")
+        return None
