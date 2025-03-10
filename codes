@@ -1,26 +1,160 @@
- Measuring the Effectiveness of AI-Generated Test Suite in OAH Testing POC
+#Chat Completion with HCP App Identity:
+#Please update the values of client_id and client_secret in the below code.
+# PIP Install
+# %pip install azure-identity
+# %pip install openai
+# %pip install langchain-openai
+# %pip install load-dotenv
+# %pip install httpx
 
-Dear Leaders and Nirmal,
+# Import necessary libraries.
+import openai
+import os
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+import httpx
 
-To rigorously assess the effectiveness of the AI-generated test suite in the OAH Testing POC, we are implementing a structured, data-driven evaluation framework focused on key quality metrics:
+# Define the authentication URL and credentials.
+auth = "https://api.uhg.com/oauth2/token"
+# auth = "https://api-stg.uhg.com/oauth2/token"
+scope = "https://api.uhg.com/.default"
+grant_type = "client_credentials"
 
-Key Metrics for Assessment
-Requirement Coverage Rate – Percentage of business rules, edge cases, and data types covered.
-Test Case Pass Rate – Proportion of test cases reaching the expected outcome in Kafka (Publish = Pass, Error = Fail).
-Error Detection Rate – Identifies failure points and potential defects uncovered by AI-generated test cases.
-Diversity & Relevance – Measures uniqueness, boundary conditions, and real-world applicability of test cases.
-Clarity & Validity – Ensures test cases are well-structured, non-redundant, and actionable.
-Implementation Approach
-Tracking Table: Each test case is assigned a unique key to track its journey from source to Kafka topics (Publish/Error) while comparing expected vs. actual outcomes.
-Requirement Coverage Matrix: Maps test cases to requirements, ensuring completeness.
-Expert Review: Senior testers will rate test cases on clarity, detectability, and overall effectiveness.
-Impact & Benefits
-By combining quantifiable KPIs with expert validation, this approach will:
-✔ Ensure comprehensive test coverage aligned with business needs.
-✔ Validate the accuracy and reliability of AI-generated test cases.
-✔ Identify potential gaps and failure points early.
-✔ Improve overall test efficiency and defect detection capabilities.
+# Use an asynchronous client to make a POST request to the auth URL.
+async with httpx.AsyncClient() as client:
+    body = {
+        "grant_type": grant_type,
+        "scope": scope,
+        "client_id": "462aae67-d2c7-4e84-b4ae-a3365598b943",
+        "client_secret": "P3W9VRslQW0XPAj49qjmEVHO179VlZin5Pa"
+    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    resp = await client.post(auth, headers=headers, data=body, timeout=60)
+    print(resp.json())
+    access_token = resp.json()["access_token"]
 
-This structured evaluation will provide clear insights into AI’s role in enhancing test effectiveness within our 6-week POC.
+    # Define the deployment name and project ID.
+    deployment_name = "gpt-4o_2024-05-13"
 
-Best,
+    # Define the Azure OpenAI endpoint and API version.
+    shared_quota_endpoint = "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0"
+    azure_openai_api_version="2025-01-01-preview"
+
+    # Initialize the OpenAI client.
+    oai_client = openai.AzureOpenAI(
+        azure_endpoint=shared_quota_endpoint,
+        api_version=azure_openai_api_version,
+        azure_deployment=deployment_name,
+        azure_ad_token=access_token,
+        default_headers={
+            "projectId": "0bef8880-4e98-413c-bc0b-41c280fd1b2a"
+        }
+    )
+
+    # Define the messages to be processed by the model.
+    messages = [{"role": "user", "content": "Hi, what is Prime number"}]
+
+    # Request the model to process the messages.
+    response = oai_client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages,
+    )
+    # Print the response from the model.
+    print(response.model_dump_json(indent=2))
+
+
+
+---
+import google.generativeai as genai
+import logging
+import openai
+from azure.identity import DefaultAzureCredential
+
+def initialize_llm(config):
+    """Initializes the LLM client based on the configuration."""
+    api_use = config.get("api_use", "Gemini")  # Default to Gemini if not specified
+
+    try:
+        if api_use.lower() == "gemini":
+            return _initialize_gemini(config)
+        elif api_use.lower() == "openai":
+            return _initialize_openai(config)
+        else:
+            raise ValueError(f"Unsupported API specified: {api_use}. Must be 'Gemini' or 'OpenAI'.")
+    except Exception as e:
+        logging.error(f"Failed to initialize LLM: {str(e)}")
+        raise
+
+def _initialize_gemini(config):
+    """Initializes the Gemini client."""
+    try:
+        if not config.get("gemini_api_key"):
+            raise ValueError("Gemini API key not found in config")
+
+        genai.configure(api_key=config["gemini_api_key"])
+        model_name = config.get("gemini_model", "gemini-1.5-flash")
+        return genai.GenerativeModel(model_name)
+    except Exception as e:
+        logging.error(f"Failed to initialize Gemini: {str(e)}")
+        raise
+
+def _initialize_openai(config):
+    """Initializes the OpenAI client."""
+    try:
+        # Get Azure credentials
+        default_credential = DefaultAzureCredential()
+        
+        access_token = default_credential.get_token("https://cognitiveservices.azure.com/.default")
+
+        if not access_token:
+            raise ValueError("Failed to obtain Azure access token")
+
+        # Store deployment name in client config for later use
+        deployment_name = config.get("deployment_name", "gpt-4o_2024-05-13")
+
+        # Initialize OpenAI client with Azure configuration
+        oai_client = openai.AzureOpenAI(
+            api_version=config.get("openai_api_version", "2024-06-01"),
+            azure_endpoint=config.get("azure_openai_endpoint",
+                                    "https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1"),
+            api_key=access_token.token,
+            default_headers={
+                "projectId": config.get("project_id", "0bef8880-4e98-413c-bc0b-41c280fd1b2a")
+            }
+        )
+        
+        # Store deployment name in the client object
+        oai_client.deployment_name = deployment_name
+        return oai_client
+    except Exception as e:
+        logging.error(f"Failed to initialize OpenAI client: {str(e)}")
+        raise
+
+def generate_test_cases_with_llm(llm_client, prompt, max_output_tokens=1000):
+    """Generates test cases using the appropriate LLM client."""
+    try:
+        if isinstance(llm_client, genai.GenerativeModel):
+            response = llm_client.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=max_output_tokens
+                )
+            )
+            if hasattr(response, 'text'):
+                return response.text
+            else:
+                logging.error("Error: LLM Response missing 'text' attribute.")
+                return None
+        elif isinstance(llm_client, openai.AzureOpenAI):
+            response = llm_client.chat.completions.create(
+                model=llm_client.deployment_name,  # Using the stored deployment name
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=max_output_tokens
+            )
+            return response.choices[0].message.content
+        else:
+            raise ValueError("Unsupported LLM client type.")
+
+    except Exception as e:
+        logging.error(f"Exception in generate_test_cases_with_llm: {e}")
+        return None
