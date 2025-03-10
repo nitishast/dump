@@ -1,160 +1,111 @@
-#Chat Completion with HCP App Identity:
-#Please update the values of client_id and client_secret in the below code.
-# PIP Install
-# %pip install azure-identity
-# %pip install openai
-# %pip install langchain-openai
-# %pip install load-dotenv
-# %pip install httpx
+# config/settings.yaml
+credentials:
+  client_id: "462aae67-d2c7-4e84-b4ae-a3365598b943"
+  client_secret: "P3W9VRslQW0XPAj49qjmEVHO179VlZin5Pa"
 
-# Import necessary libraries.
-import openai
-import os
-from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+# Other configuration settings
+openai:
+  deployment_name: "gpt-4o_2024-05-13"
+  api_version: "2025-01-01-preview"
+  endpoint: "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0"
+  project_id: "0bef8880-4e98-413c-bc0b-41c280fd1b2a"
+
+gemini:
+  model: "gemini-1.5-flash"
+
+----
+
+
 import httpx
-
-# Define the authentication URL and credentials.
-auth = "https://api.uhg.com/oauth2/token"
-# auth = "https://api-stg.uhg.com/oauth2/token"
-scope = "https://api.uhg.com/.default"
-grant_type = "client_credentials"
-
-# Use an asynchronous client to make a POST request to the auth URL.
-async with httpx.AsyncClient() as client:
-    body = {
-        "grant_type": grant_type,
-        "scope": scope,
-        "client_id": "462aae67-d2c7-4e84-b4ae-a3365598b943",
-        "client_secret": "P3W9VRslQW0XPAj49qjmEVHO179VlZin5Pa"
-    }
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    resp = await client.post(auth, headers=headers, data=body, timeout=60)
-    print(resp.json())
-    access_token = resp.json()["access_token"]
-
-    # Define the deployment name and project ID.
-    deployment_name = "gpt-4o_2024-05-13"
-
-    # Define the Azure OpenAI endpoint and API version.
-    shared_quota_endpoint = "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0"
-    azure_openai_api_version="2025-01-01-preview"
-
-    # Initialize the OpenAI client.
-    oai_client = openai.AzureOpenAI(
-        azure_endpoint=shared_quota_endpoint,
-        api_version=azure_openai_api_version,
-        azure_deployment=deployment_name,
-        azure_ad_token=access_token,
-        default_headers={
-            "projectId": "0bef8880-4e98-413c-bc0b-41c280fd1b2a"
-        }
-    )
-
-    # Define the messages to be processed by the model.
-    messages = [{"role": "user", "content": "Hi, what is Prime number"}]
-
-    # Request the model to process the messages.
-    response = oai_client.chat.completions.create(
-        model="gpt-4o",
-        messages=messages,
-    )
-    # Print the response from the model.
-    print(response.model_dump_json(indent=2))
-
-
-
----
-import google.generativeai as genai
-import logging
 import openai
+import logging
+import asyncio
+import os
+import yaml
 from azure.identity import DefaultAzureCredential
 
-def initialize_llm(config):
-    """Initializes the LLM client based on the configuration."""
-    api_use = config.get("api_use", "Gemini")  # Default to Gemini if not specified
-
+def _load_credentials():
+    """Load credentials from config/settings.yaml file"""
     try:
-        if api_use.lower() == "gemini":
-            return _initialize_gemini(config)
-        elif api_use.lower() == "openai":
-            return _initialize_openai(config)
-        else:
-            raise ValueError(f"Unsupported API specified: {api_use}. Must be 'Gemini' or 'OpenAI'.")
+        # Assuming this function is called from the src directory
+        config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                                 "config", "settings.yaml")
+        
+        with open(config_path, 'r') as file:
+            settings = yaml.safe_load(file)
+            
+        # Return the credentials section or empty dict if not found
+        return settings.get('credentials', {})
     except Exception as e:
-        logging.error(f"Failed to initialize LLM: {str(e)}")
-        raise
+        logging.error(f"Failed to load credentials from settings.yaml: {str(e)}")
+        return {}
 
-def _initialize_gemini(config):
-    """Initializes the Gemini client."""
+async def _get_access_token(config):
+    """Gets the access token using client credentials flow."""
     try:
-        if not config.get("gemini_api_key"):
-            raise ValueError("Gemini API key not found in config")
-
-        genai.configure(api_key=config["gemini_api_key"])
-        model_name = config.get("gemini_model", "gemini-1.5-flash")
-        return genai.GenerativeModel(model_name)
+        # Load credentials from settings.yaml
+        credentials = _load_credentials()
+        
+        auth_url = config.get("auth_url", "https://api.uhg.com/oauth2/token")
+        scope = config.get("scope", "https://api.uhg.com/.default")
+        grant_type = "client_credentials"
+        
+        # Prioritize credentials from config parameter, fallback to settings.yaml
+        client_id = config.get("client_id") or credentials.get("client_id")
+        client_secret = config.get("client_secret") or credentials.get("client_secret")
+        
+        if not client_id or not client_secret:
+            raise ValueError("Client ID or Client Secret not found in config or settings.yaml")
+        
+        async with httpx.AsyncClient() as client:
+            body = {
+                "grant_type": grant_type,
+                "scope": scope,
+                "client_id": client_id,
+                "client_secret": client_secret
+            }
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            resp = await client.post(auth_url, headers=headers, data=body, timeout=60)
+            
+            if resp.status_code != 200:
+                raise ValueError(f"Authentication failed: {resp.text}")
+            
+            return resp.json()["access_token"]
     except Exception as e:
-        logging.error(f"Failed to initialize Gemini: {str(e)}")
+        logging.error(f"Failed to get access token: {str(e)}")
         raise
 
 def _initialize_openai(config):
-    """Initializes the OpenAI client."""
+    """Initializes the OpenAI client with HTTPX authentication."""
     try:
-        # Get Azure credentials
-        default_credential = DefaultAzureCredential()
+        # Run the async function to get the token
+        access_token = asyncio.run(_get_access_token(config))
         
-        access_token = default_credential.get_token("https://cognitiveservices.azure.com/.default")
-
         if not access_token:
-            raise ValueError("Failed to obtain Azure access token")
+            raise ValueError("Failed to obtain access token")
 
         # Store deployment name in client config for later use
         deployment_name = config.get("deployment_name", "gpt-4o_2024-05-13")
+        
+        # Define the Azure OpenAI endpoint and API version
+        shared_quota_endpoint = config.get("azure_openai_endpoint", 
+                                          "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0")
+        azure_openai_api_version = config.get("openai_api_version", "2025-01-01-preview")
 
         # Initialize OpenAI client with Azure configuration
         oai_client = openai.AzureOpenAI(
-            api_version=config.get("openai_api_version", "2024-06-01"),
-            azure_endpoint=config.get("azure_openai_endpoint",
-                                    "https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1"),
-            api_key=access_token.token,
+            azure_endpoint=shared_quota_endpoint,
+            api_version=azure_openai_api_version,
+            azure_deployment=deployment_name,
+            azure_ad_token=access_token,
             default_headers={
                 "projectId": config.get("project_id", "0bef8880-4e98-413c-bc0b-41c280fd1b2a")
             }
         )
         
-        # Store deployment name in the client object
+        # Store deployment name in the client object for later use
         oai_client.deployment_name = deployment_name
         return oai_client
     except Exception as e:
         logging.error(f"Failed to initialize OpenAI client: {str(e)}")
         raise
-
-def generate_test_cases_with_llm(llm_client, prompt, max_output_tokens=1000):
-    """Generates test cases using the appropriate LLM client."""
-    try:
-        if isinstance(llm_client, genai.GenerativeModel):
-            response = llm_client.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    max_output_tokens=max_output_tokens
-                )
-            )
-            if hasattr(response, 'text'):
-                return response.text
-            else:
-                logging.error("Error: LLM Response missing 'text' attribute.")
-                return None
-        elif isinstance(llm_client, openai.AzureOpenAI):
-            response = llm_client.chat.completions.create(
-                model=llm_client.deployment_name,  # Using the stored deployment name
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=max_output_tokens
-            )
-            return response.choices[0].message.content
-        else:
-            raise ValueError("Unsupported LLM client type.")
-
-    except Exception as e:
-        logging.error(f"Exception in generate_test_cases_with_llm: {e}")
-        return None
