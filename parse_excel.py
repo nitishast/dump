@@ -23,44 +23,32 @@ def preprocess_excel(file_path, sheet_name):
         # Rename columns to remove leading/trailing spaces
         df.columns = df.columns.str.strip()
 
-        # Detect column indices dynamically
-        rx_bc_col = None
-        attribute_details_col = None
-        data_type_col = None
-        business_rules_col = None
-        mandatory_field_col = None
-        from_source_col = None
-        primary_key_col = None
-        required_for_deployment_col = None
-        deployment_validation_col = None
+        # Expected columns - these should be consistent across all files
+        expected_columns = [
+            "Schema Name", 
+            "Attributes Details", 
+            "Data Type", 
+            "Business Rules", 
+            "Mandatory Field", 
+            "Required from Source to have data populated", 
+            "Primary Key", 
+            "Required for Deployment Validation", 
+            "Deployment Validation"
+        ]
+        
+        # Verify all expected columns exist (with some flexibility for whitespace)
+        for expected_col in expected_columns:
+            found = False
+            for col in df.columns:
+                if expected_col.lower().strip() == col.lower().strip():
+                    found = True
+                    break
+            if not found:
+                raise ValueError(f"Required column '{expected_col}' not found in Excel sheet")
 
-        for i, col in enumerate(df.columns):
-            col_lower = col.lower()
-            if "schema name" in col_lower:
-                rx_bc_col = i
-            elif "attributes details" in col_lower:
-                attribute_details_col = i
-            elif "data type" in col_lower:
-                data_type_col = i
-            elif "business rules" in col_lower:
-                business_rules_col = i
-            elif "mandatory field" in col_lower:
-                mandatory_field_col = i
-            elif "required from source to have data populated" in col_lower:
-                from_source_col = i
-            elif "primary key" in col_lower:
-                primary_key_col = i
-            elif "required for deployment validation" in col_lower:
-                required_for_deployment_col = i
-            elif "deployment validation" in col_lower:
-                deployment_validation_col = i
-
-        if rx_bc_col is None or attribute_details_col is None or data_type_col is None or business_rules_col is None or mandatory_field_col is None or from_source_col is None or primary_key_col is None or required_for_deployment_col is None or deployment_validation_col is None:
-            raise ValueError("Could not automatically detect required columns.  "
-                             "Please ensure all required columns exist in the Excel sheet.")
-
-        # Step 1: Fill down the "Schema Name" category
-        # df.iloc[:, rx_bc_col] = df.iloc[:, rx_bc_col].ffill()
+        # Fill down the "Schema Name" category
+        schema_col = df.columns[0]  # Schema Name is always the first column
+        df[schema_col] = df[schema_col].ffill()
 
         return df
 
@@ -70,62 +58,60 @@ def preprocess_excel(file_path, sheet_name):
 
 def extract_rules_from_dataframe(df):
     """Extract rules from the cleaned dataframe."""
-    extracted_rules = {}
-    rx_bc_col = None
-    attribute_details_col = None
-    data_type_col = None
-    business_rules_col = None
-    mandatory_field_col = None
-    from_source_col = None
-    primary_key_col = None
-    required_for_deployment_col = None
-    deployment_validation_col = None
-
-    for i, col in enumerate(df.columns):
-        col_lower = col.lower()
-        if "schema name" in col_lower:
-            rx_bc_col = i
-        elif "attributes details" in col_lower:
-            attribute_details_col = i
-        elif "data type" in col_lower:
-            data_type_col = i
-        elif "business rules" in col_lower:
-            business_rules_col = i
-        elif "mandatory field" in col_lower:
-            mandatory_field_col = i
-        elif "required from source to have data populated" in col_lower:
-            from_source_col = i
-        elif "primary key" in col_lower:
-            primary_key_col = i
-        elif "required for deployment validation" in col_lower:
-            required_for_deployment_col = i
-        elif "deployment validation" in col_lower:
-            deployment_validation_col = i
     try:
+        # Get column names - using exact header names from Excel
+        schema_col = "Schema Name"
+        attribute_col = "Attributes Details"
+        data_type_col = "Data Type"
+        business_rules_col = "Business Rules"
+        mandatory_field_col = "Mandatory Field"
+        from_source_col = "Required from Source to have data populated"
+        primary_key_col = "Primary Key"
+        required_for_deployment_col = "Required for Deployment Validation"
+        deployment_validation_col = "Deployment Validation"
+        
         extracted_rules = {}
+        
         for _, row in df.iterrows():
-            parent_field = str(row.iloc[rx_bc_col]).strip()
-            field_name = str(row.iloc[attribute_details_col]).strip()
-            data_type = str(row.iloc[data_type_col]).strip() if pd.notna(row.iloc[data_type_col]) else "String"
-            business_rules = str(row.iloc[business_rules_col]).strip() if pd.notna(row.iloc[business_rules_col]) else ""
-            mandatory_field = str(row.iloc[mandatory_field_col]).strip().lower() == "yes"
-            from_source = str(row.iloc[from_source_col]).strip().lower() == "yes"
-            primary_key = str(row.iloc[primary_key_col]).strip().lower() == "yes"
-            required_for_deployment = str(row.iloc[required_for_deployment_col]).strip().lower() == "yes"
-            deployment_validation = str(row.iloc[deployment_validation_col]).strip().lower() == "yes"
-
-            if parent_field not in extracted_rules:
-                extracted_rules[parent_field] = {"fields": {}}
-
-            extracted_rules[parent_field]["fields"][field_name] = {
+            schema_name = row[schema_col]
+            attribute_name = row[attribute_col]
+            
+            # Skip rows with missing schema and attribute
+            if pd.isna(schema_name) and pd.isna(attribute_name):
+                continue
+                
+            # Skip rows with missing attribute name
+            if pd.isna(attribute_name) or str(attribute_name).strip() == "":
+                continue
+                
+            # Ensure schema exists in output dictionary
+            schema_key = str(schema_name).strip()
+            if schema_key not in extracted_rules:
+                extracted_rules[schema_key] = {"fields": {}}
+            
+            # Helper function to handle Yes/No fields
+            def is_yes(value):
+                if pd.isna(value):
+                    return False
+                value_str = str(value).strip().lower()
+                return value_str == "yes" or value_str == "y" or value_str == "true"
+            
+            # Process attribute data
+            attribute_key = str(attribute_name).strip()
+            data_type = str(row[data_type_col]).strip() if pd.notna(row[data_type_col]) else "String"
+            business_rules = str(row[business_rules_col]).strip() if pd.notna(row[business_rules_col]) else ""
+            
+            # Build field object
+            extracted_rules[schema_key]["fields"][attribute_key] = {
                 "data_type": data_type,
-                "mandatory_field": mandatory_field,
-                "from_source": from_source,
-                "primary_key": primary_key,
-                "required_for_deployment": required_for_deployment,
-                "deployment_validation": deployment_validation,
+                "mandatory_field": is_yes(row[mandatory_field_col]),
+                "from_source": is_yes(row[from_source_col]),
+                "primary_key": is_yes(row[primary_key_col]),
+                "required_for_deployment": is_yes(row[required_for_deployment_col]),
+                "deployment_validation": is_yes(row[deployment_validation_col]),
                 "business_rules": business_rules
             }
+            
         return extracted_rules
     except Exception as e:
         print(f"Error extracting rules: {e}")
