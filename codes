@@ -1,111 +1,132 @@
-# config/settings.yaml
-credentials:
-  client_id: "462aae67-d2c7-4e84-b4ae-a3365598b943"
-  client_secret: "P3W9VRslQW0XPAj49qjmEVHO179VlZin5Pa"
-
-# Other configuration settings
-openai:
-  deployment_name: "gpt-4o_2024-05-13"
-  api_version: "2025-01-01-preview"
-  endpoint: "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0"
-  project_id: "0bef8880-4e98-413c-bc0b-41c280fd1b2a"
-
-gemini:
-  model: "gemini-1.5-flash"
-
-----
-
-
-import httpx
-import openai
-import logging
-import asyncio
-import os
-import yaml
-from azure.identity import DefaultAzureCredential
-
-def _load_credentials():
-    """Load credentials from config/settings.yaml file"""
-    try:
-        # Assuming this function is called from the src directory
-        config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                                 "config", "settings.yaml")
-        
-        with open(config_path, 'r') as file:
-            settings = yaml.safe_load(file)
-            
-        # Return the credentials section or empty dict if not found
-        return settings.get('credentials', {})
-    except Exception as e:
-        logging.error(f"Failed to load credentials from settings.yaml: {str(e)}")
-        return {}
-
-async def _get_access_token(config):
-    """Gets the access token using client credentials flow."""
-    try:
-        # Load credentials from settings.yaml
-        credentials = _load_credentials()
-        
-        auth_url = config.get("auth_url", "https://api.uhg.com/oauth2/token")
-        scope = config.get("scope", "https://api.uhg.com/.default")
-        grant_type = "client_credentials"
-        
-        # Prioritize credentials from config parameter, fallback to settings.yaml
-        client_id = config.get("client_id") or credentials.get("client_id")
-        client_secret = config.get("client_secret") or credentials.get("client_secret")
-        
-        if not client_id or not client_secret:
-            raise ValueError("Client ID or Client Secret not found in config or settings.yaml")
-        
-        async with httpx.AsyncClient() as client:
-            body = {
-                "grant_type": grant_type,
-                "scope": scope,
-                "client_id": client_id,
-                "client_secret": client_secret
-            }
-            headers = {"Content-Type": "application/x-www-form-urlencoded"}
-            resp = await client.post(auth_url, headers=headers, data=body, timeout=60)
-            
-            if resp.status_code != 200:
-                raise ValueError(f"Authentication failed: {resp.text}")
-            
-            return resp.json()["access_token"]
-    except Exception as e:
-        logging.error(f"Failed to get access token: {str(e)}")
-        raise
-
-def _initialize_openai(config):
-    """Initializes the OpenAI client with HTTPX authentication."""
-    try:
-        # Run the async function to get the token
-        access_token = asyncio.run(_get_access_token(config))
-        
-        if not access_token:
-            raise ValueError("Failed to obtain access token")
-
-        # Store deployment name in client config for later use
-        deployment_name = config.get("deployment_name", "gpt-4o_2024-05-13")
-        
-        # Define the Azure OpenAI endpoint and API version
-        shared_quota_endpoint = config.get("azure_openai_endpoint", 
-                                          "https://api.uhg.com/api/cloud/api-management/ai-gateway/1.0")
-        azure_openai_api_version = config.get("openai_api_version", "2025-01-01-preview")
-
-        # Initialize OpenAI client with Azure configuration
-        oai_client = openai.AzureOpenAI(
-            azure_endpoint=shared_quota_endpoint,
-            api_version=azure_openai_api_version,
-            azure_deployment=deployment_name,
-            azure_ad_token=access_token,
-            default_headers={
-                "projectId": config.get("project_id", "0bef8880-4e98-413c-bc0b-41c280fd1b2a")
-            }
-        )
-        
-        # Store deployment name in the client object for later use
-        oai_client.deployment_name = deployment_name
-        return oai_client
-    except Exception as e:
-        logging.error(f"Failed to initialize OpenAI client: {str(e)}")
-        raise
+2025-03-24 11:51:54,735 - WARNING - Attempt 3: Failed to generate valid test cases
+2025-03-24 11:51:54,735 - INFO - Processing field 53/57: WHS Program Referral.AssessmentResponseChoID
+2025-03-24 11:52:07,948 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:07,950 - ERROR - JSON parsing error: Expecting ',' delimiter: line 36 column 21 (char 1097) - Raw response: [
+    {
+        "test_case": "TC001_Valid_Basic",
+        "description": "Basic valid input test with typical string",
+        "expected_result": "Pass",
+        "input": "ValidInput"
+    },
+    {
+        "test_case": "TC002_Invalid_EmptyString",
+        "description": "Test with an empty string input",
+        "expected_result": "Fail",
+        "input": ""
+    },
+    {
+        "test_case": "TC003_Invalid_Null",
+        "description": "Test with a null input",
+        "expected_result": "Fail",
+        "input": null
+    },
+    {
+        "test_case": "TC004_Valid_Boundary_MinLength",
+        "description": "Test with minimum non-empty string input",
+        "expected_result": "Pass",
+        "input": "a"
+    },
+    {
+        "test_case": "TC005_Valid_SpecialCharacters",
+        "description": "Test with a string containing special characters",
+        "expected_result": "Pass",
+        "input": "@#$%^&*()!"
+    },
+    {
+        "test_case": "TC006_Valid_LengthyString",
+        "description": "Test with a lengthy string input",
+        "expected_result": "Pass",
+        "input": "a".repeat(1000)
+    },
+    {
+        "test_case": "TC007_Invalid_WhitespaceOnly",
+        "description": "Test with a string containing only whitespace",
+        "expected_result": "Fail",
+        "input": "     "
+    },
+    {
+        "test_case": "TC008_Valid_NumberAsString",
+        "description": "Test with a string that represents a number",
+        "expected_result": "Pass",
+        "input": "1234567890"
+    },
+    {
+        "test_case": "TC009_Valid_Alphanumeric",
+        "description": "Test with an alphanumeric string input",
+        "expected_result": "Pass",
+        "input": "abc123DEF"
+    },
+    {
+        "test_case": "TC010_Invalid_MixedWhitespace",
+        "description": "Test with a string having mixed whitespace characters",
+        "expected_result": "Fail",
+        "input": " a b c "
+    },
+    {
+        "test_case": "TC011_Invalid_NonStringInput_Number",
+        "description": "Test with a numeric input",
+        "expected_result": "Fail",
+        "input": 123
+    },
+    {
+        "test_case": "TC012_Invalid_NonStringInput_Boolean",
+        "description": "Test with a boolean input",
+        "expected_result": "Fail",
+        "input": true
+    }
+]
+2025-03-24 11:52:07,950 - WARNING - Attempt 1: Failed to generate valid test cases
+2025-03-24 11:52:16,761 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:16,762 - INFO - Successfully generated 10 test cases
+2025-03-24 11:52:16,762 - INFO - Processing field 54/57: WHS Program Referral.AssessmentCreatedTimestamp
+2025-03-24 11:52:23,407 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:23,408 - INFO - Successfully generated 12 test cases
+2025-03-24 11:52:23,409 - INFO - Processing field 55/57: WHS Program Referral.WorkQueueNameText
+2025-03-24 11:52:32,092 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:32,093 - INFO - Successfully generated 12 test cases
+2025-03-24 11:52:32,094 - INFO - Processing field 56/57: WHS Program Referral.WorkQueueEffectiveDate
+2025-03-24 11:52:38,216 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:38,218 - WARNING - Test case 1 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 2 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 3 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 4 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 6 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 7 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 8 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 9 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,218 - WARNING - Test case 10 validation failed: Date input must be a string
+2025-03-24 11:52:38,218 - WARNING - Test case 11 validation failed: Date input must be a string
+2025-03-24 11:52:38,218 - WARNING - Test case 12 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,219 - WARNING - Test case 13 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:38,219 - INFO - Successfully generated 1 test cases
+2025-03-24 11:52:38,219 - INFO - Processing field 57/57: WHS Program Referral.WorkQueueEndDate
+2025-03-24 11:52:54,024 - INFO - HTTP Request: POST https://prod-1.services.unitedaistudio.uhg.com/aoai-shared-openai-prod-1/openai/deployments/gpt-4o_2024-05-13/chat/completions?api-version=2024-06-01 "HTTP/1.1 200 OK"
+2025-03-24 11:52:54,026 - WARNING - Test case 1 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,026 - WARNING - Test case 3 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,026 - WARNING - Test case 4 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,026 - WARNING - Test case 5 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,026 - WARNING - Test case 6 validation failed: Date input must be a string
+2025-03-24 11:52:54,026 - WARNING - Test case 7 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,026 - WARNING - Test case 8 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 9 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 10 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 11 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 12 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 13 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 14 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 15 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,027 - WARNING - Test case 16 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,028 - WARNING - Test case 17 validation failed: Invalid date format. Expected formats: ['%Y-%m-%d %H:%M:%S.%f']
+2025-03-24 11:52:54,028 - INFO - Successfully generated 1 test cases
+2025-03-24 11:52:54,045 - INFO - Created backup: data/whs/generated-test-cases.json.20250324_115254.bak
+2025-03-24 11:52:54,076 - INFO - Successfully saved test cases to data/whs/generated-test-cases.json
+2025-03-24 11:52:54,077 - INFO - 
+Test Case Generation Summary
+==============================
+Total fields processed: 39
+Total test cases generated: 387
+Average test cases per field: 9.92
+Output file: data/whs/generated-test-cases.json
+==============================
+2025-03-24 11:52:54,103 - INFO - Backup created: data/whs/test-case-with-keys.json.194408bf03d945ae8a2308fe6e789a74.bak
+2025-03-24 11:52:54,134 - INFO - Successfully saved updated test cases to data/whs/test-case-with-keys.json
