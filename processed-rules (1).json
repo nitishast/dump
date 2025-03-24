@@ -1,0 +1,523 @@
+{
+    "OH WHF Demographics": {
+        "fields": {
+            "FirstName": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": true,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "MiddleName": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "LastName": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": true,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "Non Referral Email for member": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Date_Of_Birth": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": true,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "Date of Death": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Gender": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Cell phone Number": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Address Line 1": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Address Line 2": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "City": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "State": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Zip": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "Relationship type": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            }
+        }
+    },
+    "WHS Program Referral": {
+        "fields": {
+            "MemberProgramID": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": true,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "MemberID": {
+                "data_type": "Long",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "MemberEmailText": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "MemberEmailTypeID": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or  null or blank."
+            },
+            "MemberHighCostClaimCode": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ProgramTypeID": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "ProgramOpenedTimestamp": {
+                "data_type": "DateTime",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "ProgramEndDate": {
+                "data_type": "Date",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "ProgramEnrolledDate": {
+                "data_type": "Date",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "ProgramStatusTypeID": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "NominationReasonTypeCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "NominationReasonTypeDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "CancerStratificationCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "CancerStratificationDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "SourceApplicationTypeCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "SourceApplicationTypeDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "LineOfBusinessCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "lineofBusinessDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssignmentTypeCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssignmentTypeDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "FundingArrangementCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "FundingArrangementDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "SourceMemberTypeCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "SourceMemberTypeDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ReferenceCode": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ReferenceProgramDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ReferenceDisplay": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ReferenceStatusCodeDescription": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentConductedByName": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentConductedByRole": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ResponseText": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "ResponseValue": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentID": {
+                "data_type": "Long",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "AssessmentResponseText": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentResponseValue": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentTemplateName": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentQuestionID": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "AssessmentPromptText": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "AssessmentResponseChoID": {
+                "data_type": "String",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "AssessmentCreatedTimestamp": {
+                "data_type": "DateTime",
+                "mandatory_field": false,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "WorkQueueNameText": {
+                "data_type": "String",
+                "mandatory_field": true,
+                "from_source": true,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field must always be populated(cannot be null or blank)."
+            },
+            "WorkQueueEffectiveDate": {
+                "data_type": "Date",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            },
+            "WorkQueueEndDate": {
+                "data_type": "Date",
+                "mandatory_field": true,
+                "from_source": false,
+                "primary_key": false,
+                "required_for_deployment": true,
+                "deployment_validation": true,
+                "business_rules": "This field can be populated or null or blank."
+            }
+        }
+    }
+}
