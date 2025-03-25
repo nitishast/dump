@@ -70,6 +70,21 @@ def extract_rules_from_dataframe(df):
         required_for_deployment_col = "Required for Deployment Validation"
         deployment_validation_col = "Deployment Validation"
         
+        # Mapping for data type standardization
+        type_mapping = {
+            'datetime': 'datetime64[ns]',
+            'date': 'datetime64[ns]',
+            'timestamp': 'datetime64[ns]',
+            'int': 'int64',
+            'integer': 'int64',
+            'float': 'float64',
+            'decimal': 'float64',
+            'boolean': 'bool',
+            'bool': 'bool',
+            'string': 'object',
+            'text': 'object'
+        }
+        
         extracted_rules = {}
         
         for _, row in df.iterrows():
@@ -94,16 +109,25 @@ def extract_rules_from_dataframe(df):
                 if pd.isna(value):
                     return False
                 value_str = str(value).strip().lower()
-                return value_str == "yes" or value_str == "y" or value_str == "true"
+                return value_str in ["yes", "y", "true", "1"]
             
             # Process attribute data
             attribute_key = str(attribute_name).strip()
-            data_type = str(row[data_type_col]).strip() if pd.notna(row[data_type_col]) else "String"
+            
+            # Standardize data type
+            raw_data_type = str(row[data_type_col]).strip().lower() if pd.notna(row[data_type_col]) else "string"
+            # Remove any additional qualifiers like (10,2) for decimals
+            raw_data_type = raw_data_type.split('(')[0].strip()
+            
+            # Map to standardized type, default to object (string)
+            data_type = type_mapping.get(raw_data_type, 'object')
+            
             business_rules = str(row[business_rules_col]).strip() if pd.notna(row[business_rules_col]) else ""
             
             # Build field object
             extracted_rules[schema_key]["fields"][attribute_key] = {
                 "data_type": data_type,
+                "original_data_type": raw_data_type,  # Keep original type for reference
                 "mandatory_field": is_yes(row[mandatory_field_col]),
                 "from_source": is_yes(row[from_source_col]),
                 "primary_key": is_yes(row[primary_key_col]),
