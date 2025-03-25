@@ -1,3 +1,5 @@
+# generated_test_cases.py
+
 import json
 import os
 from typing import Dict, List, Optional, Any, Tuple
@@ -5,7 +7,8 @@ import yaml
 from datetime import datetime
 import logging
 import re
-from src import llm  # Added IMPORT
+from src import llm
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -35,32 +38,50 @@ class TestCaseGenerator:
         return {
             "Date": {
                 "valid_formats": [
-                    "%Y-%m-%d %H:%M:%S.%f", # added for 3 places after seconds 
-                    # "%Y-%m-%d %H:%M:%S",
-                    # "%Y/%m/%d %H:%M:%S",
-                    # "%m/%d/%Y %H:%M:%S"
+                    "%Y-%m-%d",  # Date only
+                    "%m/%d/%Y",
+                    "%Y/%m/%d",
+                    "%m-%d-%Y",
+
                 ],
                 "extra_validation": self._validate_date_format
             },
             "String": {
                 "extra_validation": self._validate_string_format
+            },
+             "DateTime": {  # Separate rule for DateTime
+                "valid_formats": ["%Y-%m-%d %H:%M:%S.%f"],
+                "extra_validation": self._validate_date_format
+            },
+            "Long": {
+                "extra_validation": self._validate_long_format
             }
         }
+    def _validate_long_format(self, test_case: Dict[str, Any]) -> Tuple[bool, str]:
+        """Validate Long format test cases"""
+        if test_case["input"] is None:
+            return True, "" #Allow null
 
-    def _validate_date_format(self, test_case: Dict[str, Any]) -> Tuple[bool, str]:
-        """Validate date format test cases."""
+        if not isinstance(test_case["input"], (int)):
+            if test_case["expected_result"] == "Pass":
+                return False, "Long field with non-integer input should fail"
+        return True, ""
+    def _validate_date_format(self, test_case: Dict[str, Any], data_type:str = "Date") -> Tuple[bool, str]:
+        """Validate date/datetime format test cases."""
+
         if test_case["input"] is None:
             return True, ""
 
         if isinstance(test_case["input"], str):
-            for date_format in self.field_specific_rules["Date"]["valid_formats"]:
+            formats = self.field_specific_rules[data_type]["valid_formats"]
+            for date_format in formats:
                 try:
                     datetime.strptime(test_case["input"], date_format)
                     return True, ""
                 except ValueError:
                     continue
-            return False, f"Invalid date format. Expected formats: {self.field_specific_rules['Date']['valid_formats']}"
-        return False, "Date input must be a string"
+            return False, f"Invalid date format. Expected formats: {formats}"
+        return False, f"{data_type} input must be a string"
 
     def _validate_string_format(self, test_case: Dict[str, Any]) -> Tuple[bool, str]:
         """Validate string format test cases."""
@@ -77,49 +98,51 @@ class TestCaseGenerator:
         """Generate a more structured and specific prompt for test case generation."""
         field_specific_info = ""
         if data_type == "Date":
-            field_specific_info = "\nFor Date fields, use these formats only:\n" + \
+            field_specific_info = "\nFor Date fields, use these formats *only*:\n" + \
                                   "\n".join(f"- {fmt}" for fmt in self.field_specific_rules["Date"]["valid_formats"])
+        elif data_type == "DateTime":
+            field_specific_info = "\nFor DateTime fields, use this format *ONLY*:\n" + \
+                                    "- %Y-%m-%d %H:%M:%S.%f"
 
-        return f"""
-Generate test cases for the field '{field_name}' with following specifications:
-- Data Type: {data_type}
-- Mandatory: {mandatory_field}
-- Primary Key: {primary_key}
-- Business Rules: {business_rules} 
 
-Requirements:
-1. Include ONLY the JSON array of test cases in your response
-2. Each test case must have these exact fields:
-   - "test_case": A clear, unique identifier for the test
-   - "description": Detailed explanation of what the test verifies
-   - "expected_result": MUST be exactly "Pass" or "Fail"
-   - "input": The test input value (can be null, string, number, etc.)
+        prompt =  f"""
+        Generate test cases for the field '{field_name}' with following specifications:
+        - Data Type: {data_type}
+        - Mandatory: {mandatory_field}
+        - Primary Key: {primary_key}
+        - Business Rules: {business_rules}
 
-3. Include these types of test cases:
-   - Basic valid inputs
-   - Basic invalid inputs
-   - Null/empty handling
-   - Boundary conditions
-   - Edge cases
-   - Type validation
+        Requirements:
+        1.  Return a JSON array of test case objects.  Do *NOT* include any introductory text or explanations.  Do *NOT* include a code block.  Output *ONLY* the JSON array.
+        2.  Each test case *MUST* have these exact fields:
+            - "test_case": A clear, unique identifier for the test (string).
+            - "description": Detailed explanation of what the test verifies (string).
+            - "expected_result": MUST be exactly "Pass" or "Fail" (string).
+            - "input": The test input value (can be null, string, number, etc.).
+        3. Include these types of test cases:
+            - Basic valid inputs.
+            - Basic invalid inputs.
+            - Null/empty handling (if applicable).
+            - Boundary conditions (if applicable).
+            - Edge cases (if applicable).
+            - Type validation.
+        4. Consider field-specific requirements:
+            {field_specific_info}
+            - For String fields: Consider length limits and character restrictions.
+            - Handle nullable fields appropriately based on the 'Mandatory' constraint.
+        5. Do not include any javascript code snippet. If you have to show repetitions, use "a" * 255 instead of "a".repeat(255)
 
-4. Consider field-specific requirements:
-   - For Date fields: Include only valid date formats specified
-   - For String fields: Consider length limits and character restrictions
-   - Handle nullable fields appropriately based on constraints
-
-Return the response in this exact format:
-[
-    {{
-        "test_case": "TC001_Valid_Basic",
-        "description": "Basic valid input test",
-        "expected_result": "Pass",
-        "input": "example"
-    }}
-]
-
-IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
-
+        Example Format (the example is for a different field, use the specifications above):
+        [
+            {{
+                "test_case": "TC001_Valid_Basic",
+                "description": "Basic valid input test",
+                "expected_result": "Pass",
+                "input": "example"
+            }}
+        ]
+        """
+        return prompt
     def _validate_test_case(self, test_case: Dict[str, Any], data_type: str) -> Tuple[bool, str]:
         """Validate a single test case based on field type and rules."""
         if not all(field in test_case for field in ["test_case", "description", "expected_result", "input"]):
@@ -137,15 +160,16 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
     def _parse_llm_response(self, response_text: str, data_type: str) -> Optional[List[Dict[str, Any]]]:
         """Parse and validate LLM response with improved error handling."""
         try:
-            # Remove Markdown JSON blocks if present
-            cleaned_text = response_text.replace("```json", "").replace("```", "").strip()
-
-            # Handle invalid escape sequences
-            cleaned_text = re.sub(r'\\([^"\\])', r'\\\\\1', cleaned_text)
-
-            # Parse JSON
+            # Remove any surrounding text or code blocks, focusing on potential JSON
+            cleaned_text = response_text.strip()
+            cleaned_text = re.sub(r'^```[a-zA-Z]*\s*', '', cleaned_text, flags=re.MULTILINE)  # Remove code block start
+            cleaned_text = re.sub(r'```\s*$', '', cleaned_text, flags=re.MULTILINE)  # Remove code block end
+            cleaned_text = cleaned_text.strip()
+            match = re.search(r'\[.*\]', cleaned_text, re.DOTALL)
+            if match:
+                 cleaned_text = match.group(0)
+            # Attempt to parse the cleaned text as JSON
             test_cases = json.loads(cleaned_text)
-
             # Validate structure
             if not isinstance(test_cases, list):
                 raise ValueError("Response is not a JSON array")
@@ -170,7 +194,6 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
         except Exception as e:
             logging.error(f"Unexpected error parsing response: {str(e)}")
             return None
-
     def generate_test_cases(self, rules_file: str, output_file: str, llm_client) -> None:  # added llm client
         """Main method to generate and save test cases."""
         try:
@@ -181,6 +204,7 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
             all_test_cases = {}
             total_fields = sum(len(details["fields"]) for details in rules.values())
             processed_fields = 0
+            skipped_fields = []  # Keep track of skipped fields
 
             for parent_field, details in rules.items():
                 for field_name, field_details in details["fields"].items():
@@ -201,6 +225,7 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
 
                     # Get LLM response with retries
                     max_retries = 3
+                    success = False #track success
                     for attempt in range(max_retries):
                         try:
                             response_text = llm.generate_test_cases_with_llm(llm_client, prompt,
@@ -211,7 +236,8 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
                             if test_cases:
                                 all_test_cases[full_field_name] = test_cases
                                 logging.info(f"Successfully generated {len(test_cases)} test cases")
-                                break
+                                success = True
+                                break  # Exit retry loop on success
                             else:
                                 logging.warning(f"Attempt {attempt + 1}: Failed to generate valid test cases")
                         except Exception as e:
@@ -219,11 +245,18 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
                             if attempt == max_retries - 1:
                                 logging.error(
                                     f"Failed to generate test cases for {full_field_name} after {max_retries} attempts")
+                    if not success:
+                        skipped_fields.append(full_field_name)  # Add to skipped list
+
 
                     processed_fields += 1
 
             # Save results
             self._save_test_cases(all_test_cases, output_file)
+
+            # Log skipped fields
+            if skipped_fields:
+                logging.warning(f"Skipped fields (failed after {max_retries} retries): {', '.join(skipped_fields)}")
 
             # Generate summary
             if total_fields > 0:  #added a check to ensure that it does not divide by zero.
@@ -257,28 +290,43 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
         """Generate a summary of the test case generation."""
         total_fields = len(test_cases)
         total_test_cases = sum(len(cases) for cases in test_cases.values())
-
-        summary = (
-            f"\nTest Case Generation Summary\n"
-            f"{'=' * 30}\n"
-            f"Total fields processed: {total_fields}\n"
-            f"Total test cases generated: {total_test_cases}\n"
-            f"Average test cases per field: {total_test_cases / total_fields:.2f}\n"
-            f"Output file: {output_file}\n"
-            f"{'=' * 30}"
-        )
+        summary = ""
+        if total_fields > 0:  # Avoid division by zero
+            summary = (
+                f"\nTest Case Generation Summary\n"
+                f"{'=' * 30}\n"
+                f"Total fields processed: {total_fields}\n"
+                f"Total test cases generated: {total_test_cases}\n"
+                f"Average test cases per field: {total_test_cases / total_fields:.2f}\n"
+                f"Output file: {output_file}\n"
+                f"{'=' * 30}"
+            )
+        else:
+            summary = (
+                f"\nTest Case Generation Summary\n"
+                f"{'=' * 30}\n"
+                f"Total fields processed: 0\n"
+                f"Total test cases generated: 0\n"
+                f"No test cases were generated.\n"
+                f"Output file: {output_file}\n"
+                f"{'=' * 30}"
+          )
 
         logging.info(summary)
-
 def main(config):
     try:
         generator = TestCaseGenerator()
-        llm_client = llm.initialize_llm(config)
+        llm_client = llm.initialize_llm(config)  # Initialize LLM client
         generator.generate_test_cases(
-            generator.config["processed_rules_file"], #changed to use processed rules.
+            generator.config["processed_rules_file"],
             generator.config["generated_test_cases_file"],
-            llm_client
+            llm_client  # Pass LLM client
         )
     except Exception as e:
         logging.error(f"Application failed: {str(e)}")
         raise
+
+if __name__ == "__main__":
+    with open("config/settings.yaml", "r") as f:
+        config = yaml.safe_load(f)
+    main(config)
