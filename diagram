@@ -28,3 +28,43 @@ sequenceDiagram
     UI->>DB: Query Results
     DB->>UI: Return Results
     UI->>User: Display Dashboard
+
+---
+config:
+  theme: forest
+---
+sequenceDiagram
+    participant Input as Business Requirements (Excel)
+    participant AI_System as AI Model
+    participant ExecutionFW as Execution & Validation Framework
+    participant KafkaPipeline as Data Pipeline (Kafka)
+    participant AEPSystem as AEP System
+    participant Output as Test Results Report
+    Note over Input, Output: E2E Intelligent Test Automation Workflow
+    rect rgb(200, 220, 255)
+        Note over Input, AI_System: Stage 1: AI Analyzes Requirements & Generates Tests
+        Input->>AI_System: Provide Business Rules (Excel)
+        AI_System->>AI_System: Intelligently Parses Rules from Excel
+        AI_System->>AI_System: Intelligently Analyzes Rules & Uses LLM
+        AI_System-->>ExecutionFW: Generates Test Assets (Cases/Data JSON)
+        Note right of AI_System: Final JSON passed to Stage 2
+    end
+    rect rgb(220, 255, 220)
+        Note over ExecutionFW, AEPSystem: Stage 2: Automated Execution & Validation
+        ExecutionFW->>KafkaPipeline: Inject Test Data into Pipeline
+        Note over KafkaPipeline: Data Flows & Transforms
+        KafkaPipeline-->>KafkaPipeline: Data Put in Source 
+        KafkaPipeline-->>KafkaPipeline: Data Reaches Ingest
+        KafkaPipeline-->>KafkaPipeline: Data Reaches Enrich
+        KafkaPipeline-->>KafkaPipeline: Data Reaches Archive
+        KafkaPipeline-->>KafkaPipeline: Data Reaches MIF
+        KafkaPipeline-->>KafkaPipeline: Data Reaches Error
+        KafkaPipeline-->>AEPSystem: Data Reaches AEP
+        ExecutionFW->>AEPSystem: Validate Data in AEP via API
+        AEPSystem-->>ExecutionFW: Validation Confirmation
+    end
+    rect rgb(240, 240, 240)
+        Note over ExecutionFW, Output: Stage 3: Consolidated Reporting
+        ExecutionFW->>Output: Produce Comprehensive Test Report
+    end
+
