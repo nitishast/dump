@@ -1,3 +1,12 @@
+Ingest & Understand Business Rules Directly from Excel Requirements.
+AI Engine Intelligently Analyzes Rules to Auto-Generate Test Scenarios.
+AI Simultaneously Creates Relevant Positive & Negative Test Data.
+Output: Ready-to-Use Test Assets (Cases & Data) in a Standard Format.
+Automation Framework Executes Tests by Injecting Generated Data into Kafka.
+Validate End-to-End Data Flow Through Kafka & Confirm Arrival in AEP via API.
+Capture Granular Pass/Fail Results & Evidence for Each Automated Test.
+Generate Consolidated Report Providing Full Test Coverage & Quality Insights.
+
 ---
 config:
   theme: forest
