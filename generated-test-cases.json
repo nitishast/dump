@@ -1,0 +1,2286 @@
+{
+  "WHS Program Referral.MemberProgramID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC002_Valid_Alphanumeric",
+      "description": "Valid input with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "A1B2C3"
+    },
+    {
+      "test_case": "TC003_Invalid_Null",
+      "description": "Input test with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Invalid_EmptyString",
+      "description": "Input test with empty string value",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_Whitespace",
+      "description": "Input test with only whitespace characters",
+      "expected_result": "Fail",
+      "input": "    "
+    },
+    {
+      "test_case": "TC006_Invalid_SpecialCharacters",
+      "description": "Input test with special characters",
+      "expected_result": "Fail",
+      "input": "!@#$$%^"
+    },
+    {
+      "test_case": "TC007_Valid_MinLengthBoundary",
+      "description": "Valid input at minimum length boundary",
+      "expected_result": "Pass",
+      "input": "1"
+    },
+    {
+      "test_case": "TC008_Valid_MaxLengthBoundary",
+      "description": "Valid input at maximum length boundary",
+      "expected_result": "Pass",
+      "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    },
+    {
+      "test_case": "TC009_Invalid_OverMaxLengthBoundary",
+      "description": "Invalid input exceeding maximum length boundary",
+      "expected_result": "Fail",
+      "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"
+    },
+    {
+      "test_case": "TC010_Invalid_Type_Number",
+      "description": "Invalid input with number data type",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC011_Invalid_Type_Boolean",
+      "description": "Invalid input with boolean data type",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC012_Invalid_Type_Array",
+      "description": "Invalid input with array data type",
+      "expected_result": "Fail",
+      "input": [
+        "12345"
+      ]
+    },
+    {
+      "test_case": "TC013_Invalid_Type_Object",
+      "description": "Invalid input with object data type",
+      "expected_result": "Fail",
+      "input": {
+        "MemberProgramID": "12345"
+      }
+    },
+    {
+      "test_case": "TC014_Valid_Unicode",
+      "description": "Valid input with unicode characters",
+      "expected_result": "Pass",
+      "input": "\u4f1a\u5458\u8ba1\u5212ID"
+    },
+    {
+      "test_case": "TC015_Invalid_TabCharacter",
+      "description": "Invalid input containing tab character",
+      "expected_result": "Fail",
+      "input": "123\\t45"
+    }
+  ],
+  "WHS Program Referral.MemberEmailText": [
+    {
+      "test_case": "TC001_Valid_SimpleEmail",
+      "description": "Test with a simple valid email address",
+      "expected_result": "Pass",
+      "input": "user@example.com"
+    },
+    {
+      "test_case": "TC002_Valid_ComplexEmail",
+      "description": "Test with a complex valid email address",
+      "expected_result": "Pass",
+      "input": "user.name+tag+sorting@example.com"
+    },
+    {
+      "test_case": "TC003_NullInput",
+      "description": "Test with null input",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_EmptyString",
+      "description": "Test with an empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_MaxLengthEmail",
+      "description": "Test with an email address at maximum length limit",
+      "expected_result": "Pass",
+      "input": "a.very.long.email.address.that.exceeds.normal.length.limits.but.is.still.valid@example.com"
+    },
+    {
+      "test_case": "TC006_OverMaxLengthEmail",
+      "description": "Test with an email address that exceeds maximum length limit",
+      "expected_result": "Fail",
+      "input": "a.very.long.email.address.that.exceeds.normal.length.limits.is.still.valid.but.also.way.too.long@example.com"
+    },
+    {
+      "test_case": "TC007_InvalidNoDomain",
+      "description": "Test with an email address missing domain",
+      "expected_result": "Fail",
+      "input": "user@.com"
+    },
+    {
+      "test_case": "TC008_InvalidNoAtSymbol",
+      "description": "Test with an email address missing @ symbol",
+      "expected_result": "Fail",
+      "input": "user.example.com"
+    },
+    {
+      "test_case": "TC009_InvalidSpecialChars",
+      "description": "Test with an email address containing invalid special characters",
+      "expected_result": "Fail",
+      "input": "user@exam!ple.com"
+    },
+    {
+      "test_case": "TC010_EdgeCaseSingleChar",
+      "description": "Test with a single character email",
+      "expected_result": "Fail",
+      "input": "u@e.c"
+    },
+    {
+      "test_case": "TC011_EdgeCaseJustPrefix",
+      "description": "Test with an email address that is only the prefix",
+      "expected_result": "Fail",
+      "input": "user@"
+    },
+    {
+      "test_case": "TC012_InvalidEmail",
+      "description": "Test with a clearly invalid email address",
+      "expected_result": "Fail",
+      "input": "invalid email"
+    },
+    {
+      "test_case": "TC013_ValidEmailWithSubdomain",
+      "description": "Test with a valid email address that includes a subdomain",
+      "expected_result": "Pass",
+      "input": "user@mail.example.com"
+    },
+    {
+      "test_case": "TC014_ValidNumericEmail",
+      "description": "Test with a valid email address that uses numeric characters",
+      "expected_result": "Pass",
+      "input": "123456@example.com"
+    },
+    {
+      "test_case": "TC015_WhiteSpaces",
+      "description": "Test with an email address containing leading/trailing whitespaces",
+      "expected_result": "Fail",
+      "input": " user@example.com "
+    }
+  ],
+  "WHS Program Referral.MemberEmailTypeID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "email@example.com"
+    },
+    {
+      "test_case": "TC002_Valid_EmailWithNumbers",
+      "description": "Valid input with numeric characters",
+      "expected_result": "Pass",
+      "input": "user123@example.com"
+    },
+    {
+      "test_case": "TC003_Valid_EmailWithSpecialChars",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "user.name+tag@example.com"
+    },
+    {
+      "test_case": "TC004_Invalid_EmailMissingAtSign",
+      "description": "Invalid input missing @ sign",
+      "expected_result": "Fail",
+      "input": "userexample.com"
+    },
+    {
+      "test_case": "TC005_Invalid_EmailMissingDomain",
+      "description": "Invalid input missing domain",
+      "expected_result": "Fail",
+      "input": "user@"
+    },
+    {
+      "test_case": "TC006_Invalid_EmptyString",
+      "description": "Invalid input with empty string",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC007_Invalid_NullValue",
+      "description": "Invalid input with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC008_Invalid_OnlyWhitespace",
+      "description": "Invalid input with only whitespace",
+      "expected_result": "Fail",
+      "input": "   "
+    },
+    {
+      "test_case": "TC009_Valid_LongEmail",
+      "description": "Valid input with long email",
+      "expected_result": "Pass",
+      "input": "user.name.very.long.email.address.but.still.valid@example.com"
+    },
+    {
+      "test_case": "TC010_Invalid_TooLongEmail",
+      "description": "Invalid input with excessively long email",
+      "expected_result": "Fail",
+      "input": "user.name.with.very.very.very.very.very.very.very.very.very.long@example.com"
+    },
+    {
+      "test_case": "TC011_Invalid_SpacesInEmail",
+      "description": "Invalid input with spaces in email",
+      "expected_result": "Fail",
+      "input": "user name@example.com"
+    },
+    {
+      "test_case": "TC012_Valid_MixedCaseEmail",
+      "description": "Valid input with mixed-case characters",
+      "expected_result": "Pass",
+      "input": "User.Name@example.com"
+    },
+    {
+      "test_case": "TC013_Valid_UnderscoreEmail",
+      "description": "Valid input with underscores in email",
+      "expected_result": "Pass",
+      "input": "user_name@example.com"
+    },
+    {
+      "test_case": "TC014_Invalid_ConsecutiveDots",
+      "description": "Invalid input with consecutive dots in email",
+      "expected_result": "Fail",
+      "input": "user..name@example.com"
+    },
+    {
+      "test_case": "TC015_Valid_DoubleAtSign",
+      "description": "Invalid input with multiple @",
+      "expected_result": "Fail",
+      "input": "user@@example.com"
+    }
+  ],
+  "WHS Program Referral.ProgramTypeID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "ProgramA"
+    },
+    {
+      "test_case": "TC002_Valid_Basic",
+      "description": "Another basic valid input test",
+      "expected_result": "Pass",
+      "input": "Program123"
+    },
+    {
+      "test_case": "TC003_Invalid_EmptyString",
+      "description": "Test for empty string input",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Invalid_Null",
+      "description": "Test for null input",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC005_Valid_Boundary",
+      "description": "Boundary test with a single character string",
+      "expected_result": "Pass",
+      "input": "P"
+    },
+    {
+      "test_case": "TC006_Valid_Boundary",
+      "description": "Boundary test with a long string",
+      "expected_result": "Pass",
+      "input": "ProgramTypeIDThatIsReallyLong123456789012345678901234567890"
+    },
+    {
+      "test_case": "TC007_Invalid_SpecialCharacters",
+      "description": "Test with special characters",
+      "expected_result": "Pass",
+      "input": "Program!@#"
+    },
+    {
+      "test_case": "TC008_Valid_AlphaNumeric",
+      "description": "Test with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "Program123ABC"
+    },
+    {
+      "test_case": "TC009_Invalid_Whitespace",
+      "description": "Test with whitespace characters",
+      "expected_result": "Fail",
+      "input": "  "
+    },
+    {
+      "test_case": "TC010_Valid_WhitespaceInString",
+      "description": "Test with whitespace within a string",
+      "expected_result": "Pass",
+      "input": "Program Type ABC"
+    },
+    {
+      "test_case": "TC011_Invalid_Number",
+      "description": "Test with purely numeric input",
+      "expected_result": "Pass",
+      "input": "123456"
+    },
+    {
+      "test_case": "TC012_Invalid_SpecialCharacterOnly",
+      "description": "Test with only special characters",
+      "expected_result": "Pass",
+      "input": "!@#$%^"
+    },
+    {
+      "test_case": "TC013_TypeValidation_Integer",
+      "description": "Type validation test with integer input",
+      "expected_result": "Fail",
+      "input": 12345
+    }
+  ],
+  "WHS Program Referral.ProgramOpenedTimestamp": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with current datetime",
+      "expected_result": "Pass",
+      "input": "2023-10-05T14:48:00.123456789"
+    },
+    {
+      "test_case": "TC002_Valid_Basic",
+      "description": "Basic valid input test with past datetime",
+      "expected_result": "Pass",
+      "input": "2020-05-20T12:30:00.000000000"
+    },
+    {
+      "test_case": "TC003_Valid_Basic",
+      "description": "Basic valid input test with future datetime",
+      "expected_result": "Pass",
+      "input": "2024-12-31T23:59:59.999999999"
+    },
+    {
+      "test_case": "TC004_Invalid_Null",
+      "description": "Test with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC005_Invalid_EmptyString",
+      "description": "Test with empty string",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC006_Invalid_String",
+      "description": "Test with non-datetime string",
+      "expected_result": "Fail",
+      "input": "invalid datetime"
+    },
+    {
+      "test_case": "TC007_Invalid_Integer",
+      "description": "Test with integer input",
+      "expected_result": "Fail",
+      "input": 123456789
+    },
+    {
+      "test_case": "TC008_Invalid_OnlyDate",
+      "description": "Test with date only, time missing",
+      "expected_result": "Fail",
+      "input": "2023-10-05"
+    },
+    {
+      "test_case": "TC009_Invalid_BadFormat",
+      "description": "Test with bad datetime format",
+      "expected_result": "Fail",
+      "input": "10-05-2023T14:48:00"
+    },
+    {
+      "test_case": "TC010_Boundary_EpochTime",
+      "description": "Boundary test with Unix epoch start time",
+      "expected_result": "Pass",
+      "input": "1970-01-01T00:00:00.000000000"
+    },
+    {
+      "test_case": "TC011_Boundary_FarFuture",
+      "description": "Boundary test with a far future date",
+      "expected_result": "Pass",
+      "input": "9999-12-31T23:59:59.999999999"
+    },
+    {
+      "test_case": "TC012_Edge_LeapYear",
+      "description": "Edge test with leap year date",
+      "expected_result": "Pass",
+      "input": "2024-02-29T12:00:00.000000000"
+    },
+    {
+      "test_case": "TC013_Edge_YearChange",
+      "description": "Edge test with year change",
+      "expected_result": "Pass",
+      "input": "2023-12-31T23:59:59.999999999"
+    },
+    {
+      "test_case": "TC014_Edge_MillisecondPrecision",
+      "description": "Edge test with millisecond accuracy",
+      "expected_result": "Pass",
+      "input": "2023-10-05T14:48:00.999"
+    },
+    {
+      "test_case": "TC015_Edge_OnlyTime",
+      "description": "Invalid test with time only, date missing",
+      "expected_result": "Fail",
+      "input": "14:48:00"
+    }
+  ],
+  "WHS Program Referral.ProgramEndDate": [
+    {
+      "test_case": "TC001_Valid_BasicDate",
+      "description": "Valid input test with normal date",
+      "expected_result": "Pass",
+      "input": "2021-12-31T08:45:30.000000000"
+    },
+    {
+      "test_case": "TC002_Valid_Null",
+      "description": "Valid input test with null",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Valid_Blank",
+      "description": "Valid input test with blank input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Valid_EmptyString",
+      "description": "Valid input test with empty string input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_Format",
+      "description": "Invalid input test with incorrect date format",
+      "expected_result": "Fail",
+      "input": "31-12-2021"
+    },
+    {
+      "test_case": "TC006_Invalid_String",
+      "description": "Invalidate input test with non-date string",
+      "expected_result": "Fail",
+      "input": "NotADate"
+    },
+    {
+      "test_case": "TC007_Invalid_Number",
+      "description": "Invalid input test with numeric value",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC008_Invalid_TrueBoolean",
+      "description": "Invalid input test with boolean 'true'",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC009_Invalid_FalseBoolean",
+      "description": "Invalid input test with boolean 'false'",
+      "expected_result": "Fail",
+      "input": false
+    },
+    {
+      "test_case": "TC010_Valid_BoundaryMinimum",
+      "description": "Valid input test with boundary minimum date",
+      "expected_result": "Pass",
+      "input": "0001-01-01T00:00:00.000000000"
+    },
+    {
+      "test_case": "TC011_Valid_BoundaryMaximum",
+      "description": "Valid input test with boundary maximum date",
+      "expected_result": "Pass",
+      "input": "9999-12-31T23:59:59.999999999"
+    },
+    {
+      "test_case": "TC012_EdgeCase_LeapYear",
+      "description": "Valid input test with edge case Leap year date",
+      "expected_result": "Pass",
+      "input": "2020-02-29T12:00:00.000000000"
+    },
+    {
+      "test_case": "TC013_EdgeCase_EndOfYear",
+      "description": "Valid input test with end of the year date",
+      "expected_result": "Pass",
+      "input": "2021-12-31T23:59:59.000000000"
+    }
+  ],
+  "WHS Program Referral.ProgramEnrolledDate": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid datetime input test",
+      "expected_result": "Pass",
+      "input": "2023-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC002_Valid_AlternativeFormat",
+      "description": "Valid datetime input with different format",
+      "expected_result": "Pass",
+      "input": "2023-01-01 00:00:00"
+    },
+    {
+      "test_case": "TC003_Valid_Null",
+      "description": "Field has null value",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Empty_String",
+      "description": "Field has an empty string value",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Valid_PastDate",
+      "description": "Valid past date input",
+      "expected_result": "Pass",
+      "input": "2000-12-31T23:59:59"
+    },
+    {
+      "test_case": "TC006_Valid_FutureDate",
+      "description": "Valid future date input",
+      "expected_result": "Pass",
+      "input": "2050-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC007_Invalid_Format",
+      "description": "Invalid date format",
+      "expected_result": "Fail",
+      "input": "01-01-2023"
+    },
+    {
+      "test_case": "TC008_Invalid_Type",
+      "description": "Invalid type input",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC009_Invalid_DateString",
+      "description": "Input that is a non-date string",
+      "expected_result": "Fail",
+      "input": "January 1st, 2023"
+    },
+    {
+      "test_case": "TC010_Invalid_DateTime",
+      "description": "Invalid datetime input that is not a date",
+      "expected_result": "Fail",
+      "input": "2023-02-30T00:00:00"
+    },
+    {
+      "test_case": "TC011_Valid_Boundary_Min",
+      "description": "Valid datetime minimum boundary input",
+      "expected_result": "Pass",
+      "input": "1970-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC012_Valid_Boundary_Max",
+      "description": "Valid datetime maximum boundary input",
+      "expected_result": "Pass",
+      "input": "9999-12-31T23:59:59"
+    },
+    {
+      "test_case": "TC013_Null_Whitespace",
+      "description": "Field has a whitespace value",
+      "expected_result": "Fail",
+      "input": " "
+    }
+  ],
+  "WHS Program Referral.ProgramStatusTypeID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "active"
+    },
+    {
+      "test_case": "TC002_Valid_Basic_Long",
+      "description": "Long but valid input string",
+      "expected_result": "Pass",
+      "input": "archived-status-in-process"
+    },
+    {
+      "test_case": "TC003_Valid_NumericString",
+      "description": "Valid numeric string",
+      "expected_result": "Pass",
+      "input": "123456"
+    },
+    {
+      "test_case": "TC004_Invalid_Empty",
+      "description": "Empty string input, which is invalid",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_Null",
+      "description": "Null input, which is invalid",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC006_Valid_SpecialCharacters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "in-process@status"
+    },
+    {
+      "test_case": "TC007_Invalid_TypeNumber",
+      "description": "Invalid input type, expecting a string but got a number",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC008_Valid_Whitespace",
+      "description": "Valid string with whitespace characters",
+      "expected_result": "Pass",
+      "input": "in progress"
+    },
+    {
+      "test_case": "TC009_Valid_AlphaNumeric",
+      "description": "Valid alphanumeric input",
+      "expected_result": "Pass",
+      "input": "status123"
+    },
+    {
+      "test_case": "TC010_Invalid_OnlyWhitespaces",
+      "description": "Invalid input consisting only of whitespace characters",
+      "expected_result": "Fail",
+      "input": "     "
+    },
+    {
+      "test_case": "TC011_Valid_Unicode",
+      "description": "Valid string with unicode characters",
+      "expected_result": "Pass",
+      "input": "\u00e7\u00e5\u222b\u00df\u2202"
+    },
+    {
+      "test_case": "TC012_Invalid_TypeBoolean",
+      "description": "Invalid input type, expecting a string but got a boolean",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC013_Invalid_TypeArray",
+      "description": "Invalid input type, expecting a string but got an array",
+      "expected_result": "Fail",
+      "input": [
+        "active",
+        "inactive"
+      ]
+    },
+    {
+      "test_case": "TC014_Invalid_TypeObject",
+      "description": "Invalid input type, expecting a string but got an object",
+      "expected_result": "Fail",
+      "input": {
+        "status": "active"
+      }
+    }
+  ],
+  "WHS Program Referral.NominationReasonTypeDescription": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Outstanding Performance"
+    },
+    {
+      "test_case": "TC002_Valid_Empty_String",
+      "description": "Empty string input test",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_Valid_Null_Input",
+      "description": "Null input test",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Valid_Long_String",
+      "description": "Lengthy valid input string",
+      "expected_result": "Pass",
+      "input": "This is a very long nomination reason type description to test the upper limit if there are any"
+    },
+    {
+      "test_case": "TC005_Invalid_Number_Input",
+      "description": "Invalid input test with numeric value",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC006_Valid_Special_Characters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "Exceptional @ Work!"
+    },
+    {
+      "test_case": "TC007_Invalid_Boolean_Input",
+      "description": "Invalid test with boolean value",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC008_Valid_Whitespace_String",
+      "description": "Whitespace string input test",
+      "expected_result": "Pass",
+      "input": "   "
+    },
+    {
+      "test_case": "TC009_Invalid_Array_Input",
+      "description": "Invalid input with array value",
+      "expected_result": "Fail",
+      "input": [
+        "Innovative",
+        "Efficient"
+      ]
+    },
+    {
+      "test_case": "TC010_Invalid_Object_Input",
+      "description": "Invalid input with object value",
+      "expected_result": "Fail",
+      "input": {
+        "reason": "Performance"
+      }
+    }
+  ],
+  "WHS Program Referral.CancerStratificationCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "CANCER001"
+    },
+    {
+      "test_case": "TC002_Invalid_Null",
+      "description": "Input is null which is not allowed",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Invalid_Empty",
+      "description": "Input is an empty string which is not allowed",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Invalid_Whitespace",
+      "description": "Input is whitespace which is not allowed",
+      "expected_result": "Fail",
+      "input": "   "
+    },
+    {
+      "test_case": "TC005_Valid_SpecialCharacters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "CANCER@!%&_"
+    },
+    {
+      "test_case": "TC006_Valid_LongString",
+      "description": "Valid input with maximum length",
+      "expected_result": "Pass",
+      "input": "CANCERSTRATIFICATIONCODEVERYLONGLONGSTRINGCANBE123456789"
+    },
+    {
+      "test_case": "TC007_Invalid_TooLongString",
+      "description": "Input exceeds the accepted length",
+      "expected_result": "Fail",
+      "input": "CANCERSTRATIFICATIONCODEVERYLONGEXCEEDINGTHELENGTHWHICHISNOTACCEPTABLE1234567890"
+    },
+    {
+      "test_case": "TC008_Invalid_Numeric",
+      "description": "Input is numeric which is not acceptable for a string field",
+      "expected_result": "Fail",
+      "input": 123456
+    },
+    {
+      "test_case": "TC009_Invalid_Date",
+      "description": "Input is a date which is not acceptable for a string field",
+      "expected_result": "Fail",
+      "input": "2023-10-11"
+    },
+    {
+      "test_case": "TC010_Invalid_JSONObject",
+      "description": "Input is a JSON Object which is not acceptable for a string field",
+      "expected_result": "Fail",
+      "input": {
+        "code": "CANCER001"
+      }
+    },
+    {
+      "test_case": "TC011_Valid_AlphaNumeric",
+      "description": "Valid input with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "CANCER12ABC34"
+    },
+    {
+      "test_case": "TC012_Valid_UnicodeCharacters",
+      "description": "Valid input with Unicode characters",
+      "expected_result": "Pass",
+      "input": "\u764c\u75c7\u5206\u985e"
+    },
+    {
+      "test_case": "TC013_Invalid_Boolean",
+      "description": "Input is a boolean which is not acceptable for a string field",
+      "expected_result": "Fail",
+      "input": true
+    }
+  ],
+  "WHS Program Referral.CancerStratificationDescription": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Stage IV"
+    },
+    {
+      "test_case": "TC002_Empty_String",
+      "description": "Empty string as input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_Null_Input",
+      "description": "Null input",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Numeric_String",
+      "description": "Numeric characters as string input",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC005_Special_Characters",
+      "description": "Special characters in input",
+      "expected_result": "Pass",
+      "input": "!@#$%^&*()_+"
+    },
+    {
+      "test_case": "TC006_Long_String",
+      "description": "Long string input",
+      "expected_result": "Pass",
+      "input": "A long string with a lot of details which might be used for cancer stratification descriptions in the database"
+    },
+    {
+      "test_case": "TC007_Whitespace_String",
+      "description": "Whitespace string input",
+      "expected_result": "Pass",
+      "input": " "
+    },
+    {
+      "test_case": "TC008_Single_Character",
+      "description": "Single character string input",
+      "expected_result": "Pass",
+      "input": "A"
+    }
+  ],
+  "WHS Program Referral.SourceApplicationTypeCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "WEB"
+    },
+    {
+      "test_case": "TC002_Valid_SimpleString",
+      "description": "Another valid input test with simple string value",
+      "expected_result": "Pass",
+      "input": "MOBILE"
+    },
+    {
+      "test_case": "TC003_EmptyString",
+      "description": "Test with empty string input",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_NullInput",
+      "description": "Test with null input",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC005_SpacesOnly",
+      "description": "Test with spaces only in input",
+      "expected_result": "Fail",
+      "input": "    "
+    },
+    {
+      "test_case": "TC006_NumericString",
+      "description": "Valid input containing number as string",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC007_SpecialChars",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "@pp1cat!on"
+    },
+    {
+      "test_case": "TC008_AlphaNumeric",
+      "description": "Valid alphanumeric input",
+      "expected_result": "Pass",
+      "input": "App123"
+    },
+    {
+      "test_case": "TC009_SingleChar",
+      "description": "Valid input with single character",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC010_LongString",
+      "description": "Long string input as valid type",
+      "expected_result": "Pass",
+      "input": "ThisIsAnExceedinglyLengthyStringThatIsStillValidAsString"
+    },
+    {
+      "test_case": "TC011_WhiteSpaceBoundaries",
+      "description": "Input string containing leading and trailing whitespaces",
+      "expected_result": "Pass",
+      "input": "   WebApp   "
+    },
+    {
+      "test_case": "TC012_TypeValidation_Number",
+      "description": "Direct number input to test type validation",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC013_TypeValidation_Boolean",
+      "description": "Boolean type input should fail the test",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC014_TypeValidation_Array",
+      "description": "Array type input should fail the test",
+      "expected_result": "Fail",
+      "input": [
+        "Web"
+      ]
+    },
+    {
+      "test_case": "TC015_TypeValidation_Object",
+      "description": "Object type input should fail the test",
+      "expected_result": "Fail",
+      "input": {
+        "key": "value"
+      }
+    }
+  ],
+  "WHS Program Referral.LineOfBusinessCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Retail"
+    },
+    {
+      "test_case": "TC002_Valid_SpecialCharacters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "Fin-Tech@2022"
+    },
+    {
+      "test_case": "TC003_Valid_Lowercase",
+      "description": "All lowercase characters",
+      "expected_result": "Pass",
+      "input": "insurance"
+    },
+    {
+      "test_case": "TC004_Valid_Uppercase",
+      "description": "All uppercase characters",
+      "expected_result": "Pass",
+      "input": "HEALTH"
+    },
+    {
+      "test_case": "TC005_Valid_Numeric",
+      "description": "Numeric characters in string",
+      "expected_result": "Pass",
+      "input": "Logistics123"
+    },
+    {
+      "test_case": "TC006_Invalid_Null",
+      "description": "Null input test",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC007_Invalid_EmptyString",
+      "description": "Empty string input",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC008_Invalid_Whitespace",
+      "description": "Whitespace as input",
+      "expected_result": "Fail",
+      "input": "    "
+    },
+    {
+      "test_case": "TC009_Valid_BoundaryCondition_MinLength",
+      "description": "Minimum length boundary condition test",
+      "expected_result": "Pass",
+      "input": "a"
+    },
+    {
+      "test_case": "TC010_Valid_BoundaryCondition_MaxLength",
+      "description": "Maximum length boundary condition test",
+      "expected_result": "Pass",
+      "input": "aVeryLongLineOfBusinessCodeThatExceedsUsualLengthButIsStillValid"
+    },
+    {
+      "test_case": "TC011_Valid_EdgeCase_NumericOnly",
+      "description": "Numeric only edge case",
+      "expected_result": "Pass",
+      "input": "123456"
+    },
+    {
+      "test_case": "TC012_Valid_EdgeCase_SpecialCharactersOnly",
+      "description": "Special characters only edge case",
+      "expected_result": "Pass",
+      "input": "@#$%^&*!"
+    },
+    {
+      "test_case": "TC013_Invalid_NonStringType_Integer",
+      "description": "Non-string input of integer type",
+      "expected_result": "Fail",
+      "input": 123456
+    },
+    {
+      "test_case": "TC014_Invalid_NonStringType_Object",
+      "description": "Non-string input of object type",
+      "expected_result": "Fail",
+      "input": {
+        "code": "Retail"
+      }
+    },
+    {
+      "test_case": "TC015_Invalid_NonStringType_Array",
+      "description": "Non-string input of array type",
+      "expected_result": "Fail",
+      "input": [
+        "Retail",
+        "Health"
+      ]
+    }
+  ],
+  "WHS Program Referral.LineofBusinessDescription": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with a typical string",
+      "expected_result": "Pass",
+      "input": "Retail"
+    },
+    {
+      "test_case": "TC002_Valid_SpecialCharacters",
+      "description": "Valid input test with special characters",
+      "expected_result": "Pass",
+      "input": "Health & Wellness"
+    },
+    {
+      "test_case": "TC003_Valid_NumericString",
+      "description": "Valid input test with a numeric string",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC004_Valid_LongString",
+      "description": "Valid input test with a long string",
+      "expected_result": "Pass",
+      "input": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+      "test_case": "TC005_Invalid_Numeric",
+      "description": "Invalid input test with actual number instead of string",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC006_Null_Input",
+      "description": "Test with null input, should be valid",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC007_EmptyString",
+      "description": "Test with empty string, should be valid",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC008_WhitespaceString",
+      "description": "Test with whitespace string, boundary condition",
+      "expected_result": "Pass",
+      "input": " "
+    },
+    {
+      "test_case": "TC009_SpecialCharactersOnly",
+      "description": "Test with special characters only",
+      "expected_result": "Pass",
+      "input": "!@#$%^&*()"
+    },
+    {
+      "test_case": "TC010_Boundary_MaxLength",
+      "description": "Test with maximum length string (255 characters)",
+      "expected_result": "Pass",
+      "input": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam aliquet, erat a ornare sagittis, nisi risus vehicula turpis, eget laoreet nisl libero a erat. Sed non felis non lectus volutpat finibus. Praesent hendrerit pharetra vehicula. Aenean viverra pulvinar. "
+    },
+    {
+      "test_case": "TC011_Boundary_ExceedMaxLength",
+      "description": "Test with exceeding maximum length string (256 characters)",
+      "expected_result": "Fail",
+      "input": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam aliquet, erat a ornare sagittis, nisi risus vehicula turpis, eget laoreet nisl libero a erat. Sed non felis non lectus volutpat finibus. Praesent hendrerit pharetra vehicula. Aenean viverra pulvinar!!"
+    },
+    {
+      "test_case": "TC012_TypeValidation_Array",
+      "description": "Test with array type input",
+      "expected_result": "Fail",
+      "input": []
+    },
+    {
+      "test_case": "TC013_TypeValidation_Object",
+      "description": "Test with object type input",
+      "expected_result": "Fail",
+      "input": {}
+    }
+  ],
+  "WHS Program Referral.PolicyNumber": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "POL12345"
+    },
+    {
+      "test_case": "TC002_Valid_EmptyString",
+      "description": "Test with empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_NullValue",
+      "description": "Test with null value",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Invalid_Whitespace",
+      "description": "Test with only spaces",
+      "expected_result": "Pass",
+      "input": "   "
+    },
+    {
+      "test_case": "TC005_Valid_SpecialCharacters",
+      "description": "Test with special characters",
+      "expected_result": "Pass",
+      "input": "POL-1234@%"
+    },
+    {
+      "test_case": "TC006_Valid_LongString",
+      "description": "Test with maximum reasonable length string",
+      "expected_result": "Pass",
+      "input": "POL12345678901234567890"
+    },
+    {
+      "test_case": "TC007_Invalid_NonString",
+      "description": "Test with numeric input",
+      "expected_result": "Fail",
+      "input": 123456
+    },
+    {
+      "test_case": "TC008_Invalid_Alphanumeric",
+      "description": "Test with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "123ABC456DEF"
+    },
+    {
+      "test_case": "TC009_Valid_ShortString",
+      "description": "Test with single character",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC010_Invalid_SpecialCharactersOnly",
+      "description": "Test with only special characters",
+      "expected_result": "Pass",
+      "input": "#$@!"
+    }
+  ],
+  "WHS Program Referral.AlternatePolicyNumber": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with a simple string",
+      "expected_result": "Pass",
+      "input": "12345ABC"
+    },
+    {
+      "test_case": "TC002_Valid_SpecialChars",
+      "description": "Valid input test with special characters",
+      "expected_result": "Pass",
+      "input": "123-456/ABC"
+    },
+    {
+      "test_case": "TC003_Valid_LongString",
+      "description": "Valid input test with a long string",
+      "expected_result": "Pass",
+      "input": "A1234567890BCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    },
+    {
+      "test_case": "TC004_EmptyString",
+      "description": "Input test with an empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_NullValue",
+      "description": "Input test with a null value",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC006_Invalid_NumericInput",
+      "description": "Invalid input test with a purely numeric value as a string",
+      "expected_result": "Pass",
+      "input": "1234567890"
+    },
+    {
+      "test_case": "TC007_Invalid_SpecialCharsOnly",
+      "description": "Invalid input test with only special characters",
+      "expected_result": "Pass",
+      "input": "!@#$%^&*()"
+    },
+    {
+      "test_case": "TC008_Valid_MinLength",
+      "description": "Valid input test with minimal length string",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC009_Invalid_SpacesOnly",
+      "description": "Invalid input test with only spaces",
+      "expected_result": "Fail",
+      "input": "      "
+    },
+    {
+      "test_case": "TC010_Invalid_MixedValidInvalid",
+      "description": "Invalid input test with mixture of valid characters and invalid spaces",
+      "expected_result": "Fail",
+      "input": "Val id 123"
+    }
+  ],
+  "WHS Program Referral.AssignmentTypeDescription": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "example"
+    },
+    {
+      "test_case": "TC002_Valid_LongText",
+      "description": "Valid input with long text",
+      "expected_result": "Pass",
+      "input": "This is a long assignment description that exceeds typical length"
+    },
+    {
+      "test_case": "TC003_Valid_SpecialCharacters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "@#$%^&*()_+|"
+    },
+    {
+      "test_case": "TC004_Invalid_Null",
+      "description": "Input is null",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC005_Invalid_EmptyString",
+      "description": "Input is an empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC006_Invalid_SpacesOnly",
+      "description": "Input is a string with only spaces",
+      "expected_result": "Pass",
+      "input": "     "
+    },
+    {
+      "test_case": "TC007_Invalid_NumericString",
+      "description": "Input is a string of numbers",
+      "expected_result": "Pass",
+      "input": "1234567890"
+    },
+    {
+      "test_case": "TC008_Invalid_SQLInjection",
+      "description": "Input attempting SQL injection",
+      "expected_result": "Pass",
+      "input": "DROP TABLE assignments;"
+    },
+    {
+      "test_case": "TC009_Valid_AlphaNumeric",
+      "description": "Valid input with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "assignment123"
+    },
+    {
+      "test_case": "TC010_Invalid_BinaryData",
+      "description": "Input is binary data",
+      "expected_result": "Fail",
+      "input": "\\u0000\\u0001\\u0002"
+    }
+  ],
+  "WHS Program Referral.FundingArrangementCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with standard string",
+      "expected_result": "Pass",
+      "input": "STANDARD_CODE"
+    },
+    {
+      "test_case": "TC002_Valid_MinLength",
+      "description": "Valid input with minimum length",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC003_Valid_SpecialChars",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "@Funding123"
+    },
+    {
+      "test_case": "TC004_Invalid_EmptyString",
+      "description": "Invalid input with empty string",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_Null",
+      "description": "Invalid input with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC006_Invalid_NumberInput",
+      "description": "Invalid input with number instead of string",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC007_Valid_LongString",
+      "description": "Valid input with long string",
+      "expected_result": "Pass",
+      "input": "THIS_IS_A_VERY_LONG_FUNDING_CODE_EXCEEDING_USUAL_LENGTH_EXPECTATION"
+    },
+    {
+      "test_case": "TC008_Valid_AlphaNumeric",
+      "description": "Valid input with alphanumeric characters",
+      "expected_result": "Pass",
+      "input": "AlphaNum123"
+    },
+    {
+      "test_case": "TC009_Invalid_SpacesOnly",
+      "description": "Invalid input with spaces only",
+      "expected_result": "Fail",
+      "input": "     "
+    },
+    {
+      "test_case": "TC010_Valid_Unicode",
+      "description": "Valid input with unicode characters",
+      "expected_result": "Pass",
+      "input": "\u8054\u5408\u56fd"
+    }
+  ],
+  "WHS Program Referral.FundingArrangementDescription": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Funding arrangement details"
+    },
+    {
+      "test_case": "TC002_Valid_Empty",
+      "description": "Test case with empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_Valid_Null",
+      "description": "Test case with null value",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Valid_SpecialCharacters",
+      "description": "Test case with special characters in the string",
+      "expected_result": "Pass",
+      "input": "@#&*($)%!Funding"
+    },
+    {
+      "test_case": "TC005_Valid_LongString",
+      "description": "Test case with a long string input",
+      "expected_result": "Pass",
+      "input": "A very long description that exceeds typical length expectations but is still considered valid as there are no explicit length constraints"
+    },
+    {
+      "test_case": "TC006_Invalid_Number",
+      "description": "Test case with a numeric input",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC007_Invalid_Array",
+      "description": "Test case with an array input",
+      "expected_result": "Fail",
+      "input": []
+    },
+    {
+      "test_case": "TC008_Invalid_Object",
+      "description": "Test case with an object input",
+      "expected_result": "Fail",
+      "input": {}
+    },
+    {
+      "test_case": "TC009_Invalid_Boolean_True",
+      "description": "Test case with boolean true input",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC010_Invalid_Boolean_False",
+      "description": "Test case with boolean false input",
+      "expected_result": "Fail",
+      "input": false
+    }
+  ],
+  "WHS Program Referral.SourceMemberTypeCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Standard"
+    },
+    {
+      "test_case": "TC002_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "VIP"
+    },
+    {
+      "test_case": "TC003_Invalid_Null",
+      "description": "Null input should fail as the field is mandatory",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Invalid_EmptyString",
+      "description": "Empty string input should fail as the field is mandatory",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_WhiteSpaceString",
+      "description": "Whitespace string input should fail as the field is mandatory",
+      "expected_result": "Fail",
+      "input": "   "
+    },
+    {
+      "test_case": "TC006_Invalid_LongInput",
+      "description": "Excessively long string input should fail if there is a length restriction",
+      "expected_result": "Fail",
+      "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    },
+    {
+      "test_case": "TC007_Invalid_SpecialCharacters",
+      "description": "Special characters input should fail if restricted",
+      "expected_result": "Fail",
+      "input": "!@#$%^&*()"
+    },
+    {
+      "test_case": "TC008_Invalid_NumericString",
+      "description": "Numeric string input should fail if restricted to alpha characters only",
+      "expected_result": "Fail",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC009_Invalid_AlphaNumericString",
+      "description": "Alpha-numeric string input should fail if restricted to alpha characters only",
+      "expected_result": "Fail",
+      "input": "Member123"
+    },
+    {
+      "test_case": "TC010_Invalid_TypeValidationNumber",
+      "description": "Number input should fail as the field expects a string",
+      "expected_result": "Fail",
+      "input": 98765
+    },
+    {
+      "test_case": "TC011_Invalid_TypeValidationBoolean",
+      "description": "Boolean input should fail as the field expects a string",
+      "expected_result": "Fail",
+      "input": true
+    }
+  ],
+  "WHS Program Referral.ReferenceCode": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "example"
+    },
+    {
+      "test_case": "TC002_Valid_Bounds",
+      "description": "Valid input test with boundary value",
+      "expected_result": "Pass",
+      "input": "a"
+    },
+    {
+      "test_case": "TC003_Valid_SpecialChars",
+      "description": "Valid input containing special characters",
+      "expected_result": "Pass",
+      "input": "Ref-Code_123"
+    },
+    {
+      "test_case": "TC004_Invalid_Null",
+      "description": "Invalid input test with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC005_Invalid_Empty",
+      "description": "Invalid input test with empty string",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC006_Invalid_Blank",
+      "description": "Invalid input test with blank spaces",
+      "expected_result": "Fail",
+      "input": "    "
+    },
+    {
+      "test_case": "TC007_Valid_LongString",
+      "description": "Valid input test with a long string",
+      "expected_result": "Pass",
+      "input": "ThisIsAVeryLongReferenceCodeThatExceedsTypicalLengthsButIsStillValid"
+    },
+    {
+      "test_case": "TC008_Invalid_OnlyNumbers",
+      "description": "Invalid input test with only numbers",
+      "expected_result": "Pass",
+      "input": "1234567890"
+    },
+    {
+      "test_case": "TC009_Invalid_EmptyStringWithNewline",
+      "description": "Invalid input test with an empty string containing newline characters",
+      "expected_result": "Fail",
+      "input": "\\n"
+    },
+    {
+      "test_case": "TC010_Invalid_InputAsNumber",
+      "description": "Invalid input test with a number type",
+      "expected_result": "Fail",
+      "input": 123456
+    }
+  ],
+  "WHS Program Referral.AssessmentConductedByName": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with a regular string",
+      "expected_result": "Pass",
+      "input": "John Doe"
+    },
+    {
+      "test_case": "TC002_Valid_Null",
+      "description": "Test with null input for mandatory false field",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Valid_EmptyString",
+      "description": "Test with empty string input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Valid_LongString",
+      "description": "Test with a very long string input",
+      "expected_result": "Pass",
+      "input": "JohnJacobJingleheimerSchmidt"
+    },
+    {
+      "test_case": "TC005_Invalid_Number",
+      "description": "Test with a number instead of string",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC006_Invalid_SpecialCharacters",
+      "description": "Test with special characters in the string",
+      "expected_result": "Pass",
+      "input": "!@#$%^&*()"
+    },
+    {
+      "test_case": "TC007_Invalid_Boolean",
+      "description": "Test with a boolean value instead of string",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC008_Valid_BoundaryCondition",
+      "description": "Test with boundary condition: one character string",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC009_Valid_Spaces",
+      "description": "Test with string containing spaces",
+      "expected_result": "Pass",
+      "input": "   "
+    },
+    {
+      "test_case": "TC010_Invalid_Array",
+      "description": "Test with an array input instead of string",
+      "expected_result": "Fail",
+      "input": [
+        "John",
+        "Doe"
+      ]
+    }
+  ],
+  "WHS Program Referral.AssessmentConductedByRole": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Manager"
+    },
+    {
+      "test_case": "TC002_Valid_EmptyString",
+      "description": "Valid empty string input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_Valid_Null",
+      "description": "Valid null input",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Valid_SpecialCharacters",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "Admin#1"
+    },
+    {
+      "test_case": "TC005_Valid_LongString",
+      "description": "Valid input with a long string",
+      "expected_result": "Pass",
+      "input": "AdminAdministratorConductingThisAssessmentRoleFillingEdgeCaseTesting"
+    },
+    {
+      "test_case": "TC006_Valid_NumericString",
+      "description": "Valid input with numeric string",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC007_Invalid_DataType",
+      "description": "Invalid input with number data type",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC008_Valid_WhitespaceOnly",
+      "description": "Valid input with whitespace only",
+      "expected_result": "Pass",
+      "input": "   "
+    },
+    {
+      "test_case": "TC009_Invalid_ArrayType",
+      "description": "Invalid input with array data type",
+      "expected_result": "Fail",
+      "input": [
+        "Manager"
+      ]
+    },
+    {
+      "test_case": "TC010_Invalid_ObjectType",
+      "description": "Invalid input with object data type",
+      "expected_result": "Fail",
+      "input": {
+        "role": "Manager"
+      }
+    }
+  ],
+  "WHS Program Referral.AssessmentID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "12345"
+    },
+    {
+      "test_case": "TC002_Invalid_EmptyString",
+      "description": "Test with empty string input",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC003_Valid_Alphanumeric",
+      "description": "Test with alphanumeric input",
+      "expected_result": "Pass",
+      "input": "A1B2C3"
+    },
+    {
+      "test_case": "TC004_Invalid_NullValue",
+      "description": "Test with null input",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC005_Valid_SpecialCharacters",
+      "description": "Test with special characters input",
+      "expected_result": "Pass",
+      "input": "!@#456"
+    },
+    {
+      "test_case": "TC006_Invalid_SpacesOnly",
+      "description": "Test with spaces only input",
+      "expected_result": "Fail",
+      "input": "     "
+    },
+    {
+      "test_case": "TC007_Valid_LeadingTrailingSpaces",
+      "description": "Test with leading and trailing spaces that should be trimmed",
+      "expected_result": "Pass",
+      "input": " 7890 "
+    },
+    {
+      "test_case": "TC008_Invalid_OnlySpecialCharacters",
+      "description": "Test with only special characters input",
+      "expected_result": "Pass",
+      "input": "%^&*("
+    },
+    {
+      "test_case": "TC009_Valid_MaxLength",
+      "description": "Test with maximum length allowed",
+      "expected_result": "Pass",
+      "input": "A12345678901234567890"
+    },
+    {
+      "test_case": "TC010_Invalid_AboveMaxLength",
+      "description": "Test with above maximum length allowed",
+      "expected_result": "Fail",
+      "input": "A123456789012345678901"
+    }
+  ],
+  "WHS Program Referral.AssessmentResponseText": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "This is a valid response."
+    },
+    {
+      "test_case": "TC002_Invalid_NonString",
+      "description": "Invalid input with a non-string value",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC003_Null_Value",
+      "description": "Test with null value",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Empty_String",
+      "description": "Test with an empty string",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Long_Text",
+      "description": "Test with a long string",
+      "expected_result": "Pass",
+      "input": "This is a very long response text input to test the boundary condition for the length of the assessment response text field."
+    },
+    {
+      "test_case": "TC006_Special_Characters",
+      "description": "Test with special characters",
+      "expected_result": "Pass",
+      "input": "!@#$%^&*()_+|"
+    },
+    {
+      "test_case": "TC007_Spaces_Only",
+      "description": "Test with only space characters",
+      "expected_result": "Pass",
+      "input": "       "
+    },
+    {
+      "test_case": "TC008_Valid_Multiline",
+      "description": "Test with multi-line text",
+      "expected_result": "Pass",
+      "input": "Line 1\\nLine 2\\nLine 3"
+    },
+    {
+      "test_case": "TC009_Valid_UTF8",
+      "description": "Test with UTF-8 encoded characters",
+      "expected_result": "Pass",
+      "input": "\u6d4b\u8bd5\u8f93\u5165"
+    },
+    {
+      "test_case": "TC010_Valid_HTML_Tags",
+      "description": "Test with HTML tags",
+      "expected_result": "Pass",
+      "input": "<p>This is a response.</p>"
+    }
+  ],
+  "WHS Program Referral.AssessmentQuestionID": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "Q60981"
+    },
+    {
+      "test_case": "TC002_Invalid_Null",
+      "description": "Field is populated with null value",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Invalid_EmptyString",
+      "description": "Field is populated with an empty string",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Invalid_SpecialCharacters",
+      "description": "Field contains special characters",
+      "expected_result": "Fail",
+      "input": "@!#Q60981"
+    },
+    {
+      "test_case": "TC005_Invalid_Whitespace",
+      "description": "Field is populated with a string containing only whitespace",
+      "expected_result": "Fail",
+      "input": "   "
+    },
+    {
+      "test_case": "TC006_Invalid_TooShort",
+      "description": "Field is populated with a string that is too short",
+      "expected_result": "Fail",
+      "input": "Q1"
+    },
+    {
+      "test_case": "TC007_Invalid_TooLong",
+      "description": "Field is populated with a string that is too long",
+      "expected_result": "Fail",
+      "input": "Q60981234567890987654321"
+    },
+    {
+      "test_case": "TC008_Valid_NumberIncluded",
+      "description": "Field contains numbers but adheres to the format",
+      "expected_result": "Pass",
+      "input": "Q12345"
+    },
+    {
+      "test_case": "TC009_Valid_WithSpacesInside",
+      "description": "Field contains internal spaces but adheres to the format",
+      "expected_result": "Pass",
+      "input": "Q 60981"
+    },
+    {
+      "test_case": "TC010_Invalid_OnlyNumbers",
+      "description": "Field is populated with only numbers",
+      "expected_result": "Fail",
+      "input": "60981"
+    },
+    {
+      "test_case": "TC011_Invalid_OnlyAlphabets",
+      "description": "Field is populated with only alphabets",
+      "expected_result": "Fail",
+      "input": "Question"
+    },
+    {
+      "test_case": "TC012_Invalid_NonStringInput",
+      "description": "Field is populated with a non-string input",
+      "expected_result": "Fail",
+      "input": 12345
+    }
+  ],
+  "WHS Program Referral.AssessmentCreatedTimestamp": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Verify that a valid datetime value with correct format is accepted.",
+      "expected_result": "Pass",
+      "input": "2023-10-15T12:00:00"
+    },
+    {
+      "test_case": "TC002_Invalid_Null",
+      "description": "Verify that a null value is not accepted.",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Invalid_EmptyString",
+      "description": "Verify that an empty string value is not accepted.",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_EdgeCase_MinBoundaryTime",
+      "description": "Verify that the minimum valid datetime value is accepted.",
+      "expected_result": "Pass",
+      "input": "1678-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC005_EdgeCase_MaxBoundaryTime",
+      "description": "Verify that the maximum valid datetime value is accepted.",
+      "expected_result": "Pass",
+      "input": "2262-04-11T23:47:16"
+    },
+    {
+      "test_case": "TC006_Invalid_Format",
+      "description": "Verify that an incorrectly formatted datetime string is not accepted.",
+      "expected_result": "Fail",
+      "input": "15-10-2023 12:00:00"
+    },
+    {
+      "test_case": "TC007_Invalid_WrongTypeNumber",
+      "description": "Verify that a numeric value is not accepted.",
+      "expected_result": "Fail",
+      "input": 1234567890
+    },
+    {
+      "test_case": "TC008_Invalid_WrongTypeBoolean",
+      "description": "Verify that a boolean value is not accepted.",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC009_Valid_EdgeCase_LeapYear",
+      "description": "Verify that a valid leap year date is accepted.",
+      "expected_result": "Pass",
+      "input": "2024-02-29T12:00:00"
+    },
+    {
+      "test_case": "TC010_EdgeCase_BoundaryTime",
+      "description": "Verify that the datetime at the start and end of the year boundary is accepted.",
+      "expected_result": "Pass",
+      "input": "2023-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC011_Invalid_WrongMonthFormat",
+      "description": "Verify that an invalid month format is not accepted.",
+      "expected_result": "Fail",
+      "input": "2023-13-15T12:00:00"
+    },
+    {
+      "test_case": "TC012_Invalid_WrongDayFormat",
+      "description": "Verify that an invalid day format is not accepted.",
+      "expected_result": "Fail",
+      "input": "2023-10-32T12:00:00"
+    }
+  ],
+  "WHS Program Referral.WorkQueueNameText": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "MainWorkQueue"
+    },
+    {
+      "test_case": "TC002_Valid_LongString",
+      "description": "Valid input with a very long string",
+      "expected_result": "Pass",
+      "input": "AWorkQueueNameThatIsUnusuallyLongButStillValid"
+    },
+    {
+      "test_case": "TC003_Invalid_Null",
+      "description": "Input is null which is not allowed",
+      "expected_result": "Fail",
+      "input": null
+    },
+    {
+      "test_case": "TC004_Invalid_EmptyString",
+      "description": "Input is an empty string which is not allowed",
+      "expected_result": "Fail",
+      "input": ""
+    },
+    {
+      "test_case": "TC005_Invalid_Whitespace",
+      "description": "Input contains only whitespace which is not allowed",
+      "expected_result": "Fail",
+      "input": "     "
+    },
+    {
+      "test_case": "TC006_Valid_MinLength",
+      "description": "Input has the minimum valid length",
+      "expected_result": "Pass",
+      "input": "WQ"
+    },
+    {
+      "test_case": "TC007_Invalid_TypeNumber",
+      "description": "Input is a number which is not a valid string",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC008_Invalid_TypeBoolean",
+      "description": "Input is a boolean which is not a valid string",
+      "expected_result": "Fail",
+      "input": true
+    },
+    {
+      "test_case": "TC009_Valid_WorkQueue1",
+      "description": "Valid input for the first work queue table",
+      "expected_result": "Pass",
+      "input": "Queue1Table1"
+    },
+    {
+      "test_case": "TC010_Valid_WorkQueue2",
+      "description": "Valid input for the second work queue table",
+      "expected_result": "Pass",
+      "input": "Queue1Table2"
+    }
+  ],
+  "WHS Program Referral.WorkQueueEffectiveDate": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test with a standard date",
+      "expected_result": "Pass",
+      "input": "2021-09-15T00:00:00.000Z"
+    },
+    {
+      "test_case": "TC002_Valid_Null",
+      "description": "Test with null input",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC003_Valid_Empty",
+      "description": "Test with empty input",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC004_Invalid_IncorrectFormat",
+      "description": "Invalid input with incorrect date format",
+      "expected_result": "Fail",
+      "input": "15-09-2021"
+    },
+    {
+      "test_case": "TC005_Invalid_Alphabetical",
+      "description": "Invalid input with alphabetical characters",
+      "expected_result": "Fail",
+      "input": "abcde"
+    },
+    {
+      "test_case": "TC006_Invalid_Number",
+      "description": "Invalid input with a numeric value",
+      "expected_result": "Fail",
+      "input": 12345
+    },
+    {
+      "test_case": "TC007_Valid_DateTimeBoundary",
+      "description": "Boundary test with the earliest valid datetime",
+      "expected_result": "Pass",
+      "input": "0001-01-01T00:00:00.000Z"
+    },
+    {
+      "test_case": "TC008_Valid_DateTimeBoundaryFuture",
+      "description": "Boundary test with a far future valid datetime",
+      "expected_result": "Pass",
+      "input": "9999-12-31T23:59:59.999Z"
+    },
+    {
+      "test_case": "TC009_Invalid_SpecialCharacters",
+      "description": "Invalid input with special characters",
+      "expected_result": "Fail",
+      "input": "!@#$%"
+    },
+    {
+      "test_case": "TC010_Valid_SpacesOnly",
+      "description": "Test with input as spaces only",
+      "expected_result": "Pass",
+      "input": "   "
+    }
+  ],
+  "WHS Program Referral.WorkQueueEndDate": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Valid date input in standard format",
+      "expected_result": "Pass",
+      "input": "2023-09-11T00:00:00"
+    },
+    {
+      "test_case": "TC002_Valid_TimeIncluded",
+      "description": "Valid date and time input",
+      "expected_result": "Pass",
+      "input": "2023-09-11T14:30:00"
+    },
+    {
+      "test_case": "TC003_Valid_DifferentFormat",
+      "description": "Valid date-time input with different accepted format",
+      "expected_result": "Pass",
+      "input": "2023-09-11 14:30:00"
+    },
+    {
+      "test_case": "TC004_Valid_OnlyDate",
+      "description": "Valid date input without time",
+      "expected_result": "Pass",
+      "input": "2023-09-11"
+    },
+    {
+      "test_case": "TC005_Invalid_Alphabets",
+      "description": "Invalid date input with alphabetic characters",
+      "expected_result": "Fail",
+      "input": "invalid-date"
+    },
+    {
+      "test_case": "TC006_Invalid_SpecialCharacters",
+      "description": "Invalid date input with special characters",
+      "expected_result": "Fail",
+      "input": "2023-09-11*@14:30:00"
+    },
+    {
+      "test_case": "TC007_Invalid_Numeric",
+      "description": "Invalid numeric input instead of date",
+      "expected_result": "Fail",
+      "input": 123456789
+    },
+    {
+      "test_case": "TC008_Invalid_OutOfRangeDate",
+      "description": "Invalid date input that is out of range",
+      "expected_result": "Fail",
+      "input": "2023-02-30"
+    },
+    {
+      "test_case": "TC009_NullValue",
+      "description": "Null input for the date field",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC010_EmptyString",
+      "description": "Empty string input for the date field",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC011_Valid_MinimumDatetime",
+      "description": "Valid minimum edge datetime",
+      "expected_result": "Pass",
+      "input": "0001-01-01T00:00:00"
+    },
+    {
+      "test_case": "TC012_Valid_MaximumDatetime",
+      "description": "Valid maximum edge datetime",
+      "expected_result": "Pass",
+      "input": "9999-12-31T23:59:59"
+    },
+    {
+      "test_case": "TC013_Invalid_DatePartiallyCorrect",
+      "description": "Partially correct date input",
+      "expected_result": "Fail",
+      "input": "2023-14-11"
+    }
+  ],
+  "WHS Program Referral.WRK_QUE_GRP": [
+    {
+      "test_case": "TC001_Valid_Basic",
+      "description": "Basic valid input test",
+      "expected_result": "Pass",
+      "input": "GroupName1"
+    },
+    {
+      "test_case": "TC002_Valid_SpecialChars",
+      "description": "Valid input with special characters",
+      "expected_result": "Pass",
+      "input": "Grp_Name@123"
+    },
+    {
+      "test_case": "TC003_Valid_MaxLength",
+      "description": "Valid input with maximum expected length",
+      "expected_result": "Pass",
+      "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+    },
+    {
+      "test_case": "TC004_Invalid_TooLong",
+      "description": "Invalid input exceeding maximum length",
+      "expected_result": "Fail",
+      "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890"
+    },
+    {
+      "test_case": "TC005_Invalid_Characters",
+      "description": "Invalid input with prohibited characters",
+      "expected_result": "Fail",
+      "input": "Group!Name#$%"
+    },
+    {
+      "test_case": "TC006_Null_Input",
+      "description": "Input as null to verify handling of null values",
+      "expected_result": "Pass",
+      "input": null
+    },
+    {
+      "test_case": "TC007_Empty_String",
+      "description": "Input as an empty string to verify handling of empty values",
+      "expected_result": "Pass",
+      "input": ""
+    },
+    {
+      "test_case": "TC008_Boundary_MinLength",
+      "description": "Valid input with minimum length (1 character)",
+      "expected_result": "Pass",
+      "input": "A"
+    },
+    {
+      "test_case": "TC009_Valid_JoinCondition",
+      "description": "Input matching expected pattern for join condition",
+      "expected_result": "Pass",
+      "input": "JoinGroup1"
+    },
+    {
+      "test_case": "TC010_Invalid_Numeric",
+      "description": "Invalid input entirely numeric",
+      "expected_result": "Fail",
+      "input": "123456"
+    }
+  ]
+}
