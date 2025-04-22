@@ -236,19 +236,56 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
             raise
 
     def _save_test_cases(self, test_cases: Dict[str, List[Dict[str, Any]]], output_file: str) -> None:
-        """Save test cases with backup."""
+        """Save test cases with backup and also create a CSV version."""
         try:
             # Create backup of existing file if it exists
             if os.path.exists(output_file):
                 backup_file = f"{output_file}.{datetime.now().strftime('%Y%m%d_%H%M%S')}.bak"
                 os.rename(output_file, backup_file)
                 logging.info(f"Created backup: {backup_file}")
-
-            # Save new test cases
+    
+            # Save new test cases as JSON
             with open(output_file, "w") as f:
                 json.dump(test_cases, f, indent=2)
             logging.info(f"Successfully saved test cases to {output_file}")
-
+    
+            # Also save as CSV
+            csv_output_file = output_file.replace('.json', '.csv')
+            with open(csv_output_file, "w") as f:
+                # Write CSV header
+                f.write("Schema Name,Field Name,Test case,Description,expected_result,input\n")
+                
+                # Write each test case
+                for full_field_name, cases in test_cases.items():
+                    # Split the full field name into schema and field names
+                    parts = full_field_name.split('.')
+                    schema_name = parts[0]
+                    field_name = '.'.join(parts[1:])  # Handle potentially nested field names
+                    
+                    for case in cases:
+                        # Format the input value properly for CSV
+                        input_value = case["input"]
+                        if input_value is None:
+                            formatted_input = "NULL"
+                        elif isinstance(input_value, str):
+                            # Escape quotes in strings and wrap in quotes
+                            formatted_input = f'"{input_value.replace('"', '""')}"'
+                        else:
+                            formatted_input = str(input_value)
+                        
+                        # Write the row
+                        row = [
+                            schema_name,
+                            field_name,
+                            case["test_case"],
+                            case["description"].replace(",", ";"),  # Replace commas to avoid CSV issues
+                            case["expected_result"],
+                            formatted_input
+                        ]
+                        f.write(",".join(row) + "\n")
+            
+            logging.info(f"Successfully saved CSV test cases to {csv_output_file}")
+    
         except Exception as e:
             logging.error(f"Failed to save test cases: {str(e)}")
             raise
