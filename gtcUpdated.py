@@ -472,40 +472,56 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
 
         logging.info(summary)
 
-def main(config_path: str = "config/settings.yaml"): # Accept config path
+# Ensure this is the main function structure you are using:
+
+def main(config_path: str = "config/settings.yaml"): # Accepts the PATH STRING
     try:
-        # Load config early to pass to initializers
+        # --- Load config dictionary FIRST ---
         try:
              with open(config_path, "r") as f:
+                 # Load the dictionary from the file path
                  config = yaml.safe_load(f)
         except FileNotFoundError:
              logging.error(f"Main: Configuration file not found: {config_path}")
-             return # Stop if config is missing
+             # Exit or raise if config is essential
+             return # Or raise SystemExit(1)
         except Exception as e:
-             logging.error(f"Main: Failed to load config {config_path}: {str(e)}")
-             return # Stop if config loading fails
+             # Log the error showing the path it tried to open
+             logging.error(f"Main: Failed to load config from path '{config_path}': {str(e)}")
+             # Exit or raise
+             return # Or raise SystemExit(1)
 
-        # Ensure required config keys exist before proceeding
-        required_config_keys = ["processed_rules_file", "generated_test_cases_file"]
+        # --- Validate required config keys ---
+        required_config_keys = ["processed_rules_file", "generated_test_cases_file"] # Add other required keys
         if not all(key in config for key in required_config_keys):
              missing_keys = [key for key in required_config_keys if key not in config]
              logging.error(f"Configuration file '{config_path}' is missing required keys: {', '.join(missing_keys)}")
-             return
+             return # Or raise SystemExit(1)
 
-        generator = TestCaseGenerator(config_path=config_path) # Pass path to constructor
-        llm_client = llm.initialize_llm(config) # Initialize LLM using loaded config
+        # --- Initialize Generator (pass the PATH STRING) ---
+        # The constructor will load the config again internally using the path
+        generator = TestCaseGenerator(config_path=config_path)
 
+        # --- Initialize LLM (pass the LOADED DICTIONARY) ---
+        llm_client = llm.initialize_llm(config)
+
+        # --- Generate Test Cases (use paths from the generator's loaded config) ---
         generator.generate_test_cases(
-            config["processed_rules_file"], # Use value from loaded config
-            config["generated_test_cases_file"], # Use value from loaded config (JSON path)
+            generator.config["processed_rules_file"],
+            generator.config["generated_test_cases_file"], # This is the JSON output path
             llm_client
         )
         logging.info("Test case generation process completed.")
 
     except Exception as e:
-        # Catch any unexpected errors during setup or execution
-        logging.error(f"Application failed: {str(e)}", exc_info=True) # Log stack trace
+        # Catch any other unexpected errors during setup or execution
+        logging.error(f"Application failed unexpectedly in main: {str(e)}", exc_info=True) # Log stack trace
         # Depending on deployment, might want sys.exit(1) here
+
+# Example of how to run main (if this script is executed directly)
+if __name__ == "__main__":
+     # Ensure the llm module is available and config/settings.yaml exists and is correct
+     main(config_path="config/settings.yaml") # Pass the PATH STRING here
 
 # Example of how to run main (if this script is executed directly)
 if __name__ == "__main__":
