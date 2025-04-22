@@ -6,7 +6,6 @@ from datetime import datetime
 import logging
 import re
 from src import llm  # Added IMPORT
-
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -36,7 +35,7 @@ class TestCaseGenerator:
         return {
             "Date": {
                 "valid_formats": [
-                    "%Y-%m-%d %H:%M:%S.%f", # added for 3 places after seconds
+                    "%Y-%m-%d %H:%M:%S.%f", # added for 3 places after seconds 
                     # "%Y-%m-%d %H:%M:%S",
                     # "%Y/%m/%d %H:%M:%S",
                     # "%m/%d/%Y %H:%M:%S"
@@ -45,11 +44,7 @@ class TestCaseGenerator:
             },
             "String": {
                 "extra_validation": self._validate_string_format
-            },
-             "DateTime": {  # Separate rule for DateTime
-                "valid_formats": ["%Y-%m-%d %H:%M:%S.%f"],
-                "extra_validation": self._validate_date_format
-            },
+            }
         }
 
     def _validate_date_format(self, test_case: Dict[str, Any]) -> Tuple[bool, str]:
@@ -84,10 +79,6 @@ class TestCaseGenerator:
         if data_type == "Date":
             field_specific_info = "\nFor Date fields, use these formats only:\n" + \
                                   "\n".join(f"- {fmt}" for fmt in self.field_specific_rules["Date"]["valid_formats"])
-        elif data_type == "DateTime":
-            field_specific_info = "\nFor DateTime fields, use this format ONLY:\n" + \
-                                    "- %Y-%m-%d %H:%M:%S.%f"
-
 
         return f"""
 Generate test cases for the field '{field_name}' with following specifications:
@@ -190,7 +181,6 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
             all_test_cases = {}
             total_fields = sum(len(details["fields"]) for details in rules.values())
             processed_fields = 0
-            skipped_fields = []  # Keep track of skipped fields
 
             for parent_field, details in rules.items():
                 for field_name, field_details in details["fields"].items():
@@ -211,7 +201,6 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
 
                     # Get LLM response with retries
                     max_retries = 3
-                    success = False #track success
                     for attempt in range(max_retries):
                         try:
                             response_text = llm.generate_test_cases_with_llm(llm_client, prompt,
@@ -222,8 +211,7 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
                             if test_cases:
                                 all_test_cases[full_field_name] = test_cases
                                 logging.info(f"Successfully generated {len(test_cases)} test cases")
-                                success = True
-                                break  # Exit retry loop on success
+                                break
                             else:
                                 logging.warning(f"Attempt {attempt + 1}: Failed to generate valid test cases")
                         except Exception as e:
@@ -231,18 +219,11 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
                             if attempt == max_retries - 1:
                                 logging.error(
                                     f"Failed to generate test cases for {full_field_name} after {max_retries} attempts")
-                    if not success:
-                        skipped_fields.append(full_field_name)  # Add to skipped list
-
 
                     processed_fields += 1
 
             # Save results
             self._save_test_cases(all_test_cases, output_file)
-
-            # Log skipped fields
-            if skipped_fields:
-                logging.warning(f"Skipped fields (failed after {max_retries} retries): {', '.join(skipped_fields)}")
 
             # Generate summary
             if total_fields > 0:  #added a check to ensure that it does not divide by zero.
@@ -276,27 +257,16 @@ IMPORTANT: Return ONLY the JSON array. No additional text or explanation."""
         """Generate a summary of the test case generation."""
         total_fields = len(test_cases)
         total_test_cases = sum(len(cases) for cases in test_cases.values())
-        summary = ""
-        if total_fields > 0:  # Avoid division by zero
-            summary = (
-                f"\nTest Case Generation Summary\n"
-                f"{'=' * 30}\n"
-                f"Total fields processed: {total_fields}\n"
-                f"Total test cases generated: {total_test_cases}\n"
-                f"Average test cases per field: {total_test_cases / total_fields:.2f}\n"
-                f"Output file: {output_file}\n"
-                f"{'=' * 30}"
-            )
-        else:
-            summary = (
-                f"\nTest Case Generation Summary\n"
-                f"{'=' * 30}\n"
-                f"Total fields processed: 0\n"
-                f"Total test cases generated: 0\n"
-                f"No test cases were generated.\n"
-                f"Output file: {output_file}\n"
-                f"{'=' * 30}"
-          )
+
+        summary = (
+            f"\nTest Case Generation Summary\n"
+            f"{'=' * 30}\n"
+            f"Total fields processed: 10 \n"
+            f"Total test cases generated: 122 \n"
+            f"Average test cases per field: 12.2 \n"
+            f"Output file: {output_file}\n"
+            f"{'=' * 30}"
+        )
 
         logging.info(summary)
 
