@@ -1,0 +1,155 @@
+graph LR
+    subgraph User Interface
+        direction TB
+        User([User]) --> FE[Azure Static Web App];
+        FE --- API_GW[API Endpoints<br>(Azure Functions or ACA)];
+    end
+
+    subgraph Backend Services (Azure Container Apps / Functions)
+        direction TB
+        API_GW --> Q_Gen[Generation Queue<br>(Azure Queue Storage)];
+        Q_Gen --> AI_Svc[AI Generation Service<br>(Python Container)];
+        API_GW --> Q_Ing[Ingestion Queue<br>(Azure Queue Storage)];
+        Q_Ing --> ING_Svc[Ingestion & Validation Service<br>(Python Container)];
+    end
+
+    subgraph Azure Core Services
+        direction TB
+        Vault[Azure Key Vault];
+        Blob[Azure Blob Storage];
+        Auth[Azure AD / Entra ID];
+        Monitor[Azure Monitor];
+    end
+
+    subgraph External Systems
+        direction TB
+        LLM[Azure OpenAI Service];
+        Kafka[Kafka Cluster];
+        AEP[AEP Validation API];
+    end
+
+    %% Connections
+    FE -- Authenticates With --> Auth;
+    API_GW -- Authenticates With --> Auth;
+
+    AI_Svc -- Reads/Writes --> Blob;
+    ING_Svc -- Reads/Writes --> Blob;
+    FE -- Uploads To/Downloads From --> Blob;
+
+    AI_Svc -- Reads Secrets --> Vault;
+    ING_Svc -- Reads Secrets --> Vault;
+
+    AI_Svc -- Calls --> LLM;
+    ING_Svc -- Interacts With --> Kafka;
+    ING_Svc -- Calls --> AEP;
+
+    FE -- Sends Logs --> Monitor;
+    API_GW -- Sends Logs --> Monitor;
+    AI_Svc -- Sends Logs --> Monitor;
+    ING_Svc -- Sends Logs --> Monitor;
+
+    %% Style
+    style FE fill:#ddeeff,stroke:#333;
+    style AI_Svc fill:#e6e6fa,stroke:#333;
+    style ING_Svc fill:#f0fff0,stroke:#333;
+
+
+sequenceDiagram
+    participant User
+    participant Browser (Static Web App)
+    participant AzureAD
+    participant API (Functions/ACA Endpoint)
+    participant Queue Generation
+    participant AI Service (ACA)
+    participant Queue Ingestion
+    participant Ingestion Service (ACA)
+    participant Blob Storage
+    participant Key Vault
+    participant LLM Service
+    participant Kafka
+    participant AEP API
+
+    User->>Browser (Static Web App): Access App
+    Browser (Static Web App)->>AzureAD: Redirect for Login
+    AzureAD-->>Browser (Static Web App): Authenticated Token
+    User->>Browser (Static Web App): Upload Excel File
+    Browser (Static Web App)->>Blob Storage: Store Raw Excel
+    Browser (Static Web App)->>API (Functions/ACA Endpoint): Start Generation (File Ref)
+    API (Functions/ACA Endpoint)->>Queue Generation: Enqueue Job (File Ref, JobID)
+    activate AI Service (ACA)
+    AI Service (ACA)-->>Queue Generation: Dequeue Job
+    AI Service (ACA)->>Blob Storage: Get Excel File
+    AI Service (ACA)->>Key Vault: Get LLM Key
+    AI Service (ACA)->>LLM Service: Generate Cases/Data
+    LLM Service-->>AI Service (ACA): Response
+    AI Service (ACA)->>Blob Storage: Save Generated JSON Asset (linked to JobID)
+    AI Service (ACA)->>API (Functions/ACA Endpoint): Update Job Status 'Generated' (Optional)
+    deactivate AI Service (ACA)
+
+    User->>Browser (Static Web App): Check Status / View Assets
+    Browser (Static Web App)->>API (Functions/ACA Endpoint): Get Status/Links (JobID)
+    API (Functions/ACA Endpoint)-->>Browser (Static Web App): Status, Asset Link
+
+    User->>Browser (Static Web App): Trigger Ingestion Run (Asset Ref)
+    Browser (Static Web App)->>API (Functions/ACA Endpoint): Start Ingestion (Asset Ref, JobID)
+    API (Functions/ACA Endpoint)->>Queue Ingestion: Enqueue Job (Asset Ref, JobID)
+    activate Ingestion Service (ACA)
+    Ingestion Service (ACA)-->>Queue Ingestion: Dequeue Job
+    Ingestion Service (ACA)->>Blob Storage: Get JSON Asset
+    Ingestion Service (ACA)->>Key Vault: Get Kafka/AEP Secrets
+    Ingestion Service (ACA)->>Kafka: Produce/Consume Data
+    Ingestion Service (ACA)->>AEP API: Validate Data
+    AEP API-->>Ingestion Service (ACA): Validation Result
+    Ingestion Service (ACA)->>Blob Storage: Save Report CSV (linked to JobID)
+    Ingestion Service (ACA)->>API (Functions/ACA Endpoint): Update Job Status 'Complete' (Optional)
+    deactivate Ingestion Service (ACA)
+
+    User->>Browser (Static Web App): Check Status / Download Report
+    Browser (Static Web App)->>API (Functions/ACA Endpoint): Get Status/Links (JobID)
+    API (Functions/ACA Endpoint)-->>Browser (Static Web App): Status, Report Link
+
+
+graph TD
+    A[User Logs In via Browser] -- Azure AD Auth --> B(Frontend: Azure Static Web App);
+    B -- 1. Upload Excel File --> C[Azure Blob Storage: Raw Uploads];
+    B -- 2. Trigger AI Generation (Pass File Ref) --> D[API Endpoint: Azure Function or ACA];
+    D -- 3. Enqueue Generation Job --> E[Azure Queue Storage: Generation Queue];
+
+    subgraph Async AI Generation Process
+    F[AI Worker: Azure Container App] -- 4. Triggered by Queue Message --> G{Fetch Excel from Blob};
+    G --> H{Get LLM Keys from Key Vault};
+    H --> I{Call Azure OpenAI Service};
+    I --> J{Process LLM Response};
+    J --> K[Save Generated JSON Asset to Blob];
+    K --> L{Update Job Status (e.g., status file in Blob or simple DB)};
+    end
+
+    B -- 5. User Checks Status / Views Assets --> M[API Endpoint: Get Job Status/Asset Links];
+    M --> L;
+    M --> K;
+
+    B -- 6. User Triggers Ingestion Run (Selects Asset) --> N[API Endpoint: Azure Function or ACA];
+    N -- 7. Enqueue Ingestion Job --> O[Azure Queue Storage: Ingestion Queue];
+
+    subgraph Async Ingestion & Validation Process
+    P[Ingestion Worker: Azure Container App] -- 8. Triggered by Queue Message --> Q{Fetch JSON Asset from Blob};
+    Q --> R{Get Kafka/AEP Secrets from Key Vault/Config};
+    R --> S{Produce/Consume Kafka Topics};
+    S --> T{Call AEP Validation API};
+    T --> U[Generate Report CSV];
+    U --> V[Save Report CSV to Blob];
+    V --> W{Update Job Status};
+    end
+
+    B -- 9. User Checks Status / Downloads Report --> X[API Endpoint: Get Job Status/Report Links];
+    X --> W;
+    X --> V;
+
+    %% Connections to External Systems
+    P --> Kafka[Kafka Cluster];
+    P --> AEP[AEP Validation API];
+
+    %% Styling
+    style F fill:#e6e6fa,stroke:#333,stroke-width:2px;
+    style P fill:#f0fff0,stroke:#333,stroke-width:2px;
+    style B fill:#ddeeff,stroke:#333,stroke-width:1px;
