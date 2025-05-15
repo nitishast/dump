@@ -81,8 +81,8 @@ def extract_rules_from_dataframe(df):
             'decimal': 'float64',
             'boolean': 'bool',
             'bool': 'bool',
-            'string': 'object',
-            'text': 'object'
+            'string': 'string',
+            'text': 'string'
         }
         
         extracted_rules = {}
@@ -127,7 +127,7 @@ def extract_rules_from_dataframe(df):
             # Build field object
             extracted_rules[schema_key]["fields"][attribute_key] = {
                 "data_type": data_type,
-                "original_data_type": raw_data_type,  # Keep original type for reference
+                # "original_data_type": raw_data_type,  # Keep original type for reference
                 "mandatory_field": is_yes(row[mandatory_field_col]),
                 "from_source": is_yes(row[from_source_col]),
                 "primary_key": is_yes(row[primary_key_col]),
