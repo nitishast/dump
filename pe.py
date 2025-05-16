@@ -79,7 +79,7 @@ def preprocess_excel(file_path, sheet_name):
         return None
 
 def extract_rules_from_dataframe(df):
-    """Extract rules from the cleaned dataframe with updated column mapping."""
+    """Extract rules from the cleaned dataframe with updated column mapping and multi-line business rules handling."""
     try:
         # Get column names - using flexible approach for finding columns
         schema_col = "Schema Name"
@@ -127,8 +127,10 @@ def extract_rules_from_dataframe(df):
         }
         
         extracted_rules = {}
+        business_rules_collector = {}  # To collect multi-line business rules
         
-        for _, row in df.iterrows():
+        # First pass: Identify all fields and collect basic information
+        for idx, row in df.iterrows():
             schema_name = row[schema_col]
             attribute_name = row[attribute_col]
             
@@ -136,12 +138,63 @@ def extract_rules_from_dataframe(df):
             if pd.isna(schema_name) and pd.isna(attribute_name):
                 continue
                 
-            # Skip rows with missing attribute name
+            # Skip rows with missing attribute name (but keep processing for business rules collection)
+            if pd.isna(attribute_name) or str(attribute_name).strip() == "":
+                # This might be a continuation row with additional business rules
+                # Try to associate it with the last processed field
+                if business_rules_col in df.columns and pd.notna(row[business_rules_col]):
+                    last_schema = None
+                    last_attribute = None
+                    
+                    # Find the last valid schema and attribute
+                    for prev_idx in range(idx-1, -1, -1):
+                        prev_row = df.iloc[prev_idx]
+                        if pd.notna(prev_row[attribute_col]) and str(prev_row[attribute_col]).strip() != "":
+                            last_schema = str(prev_row[schema_col]).strip()
+                            last_attribute = str(prev_row[attribute_col]).strip()
+                            break
+                    
+                    if last_schema and last_attribute:
+                        key = f"{last_schema}.{last_attribute}"
+                        if key not in business_rules_collector:
+                            business_rules_collector[key] = []
+                        business_rules_collector[key].append(str(row[business_rules_col]).strip())
+                continue
+                
+            # Basic field processing
+            schema_key = str(schema_name).strip()
+            attribute_key = str(attribute_name).strip()
+            key = f"{schema_key}.{attribute_key}"
+            
+            # Initialize business rules collector for this field
+            if key not in business_rules_collector:
+                business_rules_collector[key] = []
+            
+            # Add the current row's business rules
+            if business_rules_col in df.columns and pd.notna(row[business_rules_col]):
+                business_rules_collector[key].append(str(row[business_rules_col]).strip())
+        
+        # Second pass: Process all fields with collected business rules
+        for idx, row in df.iterrows():
+            schema_name = row[schema_col]
+            attribute_name = row[attribute_col]
+            
+            # Skip rows with missing schema and attribute or missing attribute name
+            if pd.isna(schema_name) and pd.isna(attribute_name):
+                continue
             if pd.isna(attribute_name) or str(attribute_name).strip() == "":
                 continue
                 
-            # Ensure schema exists in output dictionary
+            # Process the field
             schema_key = str(schema_name).strip()
+            attribute_key = str(attribute_name).strip()
+            key = f"{schema_key}.{attribute_key}"
+            
+            # Skip if we've already processed this field
+            if schema_key in extracted_rules and attribute_key in extracted_rules[schema_key]["fields"]:
+                continue
+                
+            # Ensure schema exists in output dictionary
             if schema_key not in extracted_rules:
                 extracted_rules[schema_key] = {"fields": {}}
             
@@ -152,9 +205,6 @@ def extract_rules_from_dataframe(df):
                 value_str = str(value).strip().lower()
                 return value_str in ["yes", "y", "true", "1"]
             
-            # Process attribute data
-            attribute_key = str(attribute_name).strip()
-            
             # Standardize data type
             raw_data_type = str(row[data_type_col]).strip().lower() if pd.notna(row[data_type_col]) else "string"
             # Remove any additional qualifiers like (10,2) for decimals
@@ -163,7 +213,9 @@ def extract_rules_from_dataframe(df):
             # Map to standardized type, default to String
             data_type = type_mapping.get(raw_data_type, 'String')
             
-            business_rules = str(row[business_rules_col]).strip() if pd.notna(row[business_rules_col]) else ""
+            # Combine all collected business rules for this field
+            combined_business_rules = "\n".join(business_rules_collector.get(key, []))
+            
             expected_values = str(row[expected_values_col]).strip() if expected_values_col in df.columns and pd.notna(row[expected_values_col]) else ""
             
             # Build field object with new fields
@@ -171,7 +223,7 @@ def extract_rules_from_dataframe(df):
                 "data_type": data_type,
                 "mandatory_field": is_yes(row[mandatory_field_col]),
                 "primary_key": is_yes(row[primary_key_col]),
-                "business_rules": business_rules,
+                "business_rules": combined_business_rules,
                 "expected_values": expected_values
             }
             
@@ -190,6 +242,15 @@ def extract_rules_from_dataframe(df):
             
             extracted_rules[schema_key]["fields"][attribute_key] = field_data
             
+        # Add a log for debug purposes showing the results
+        for schema_key, schema_data in extracted_rules.items():
+            for field_key, field_data in schema_data["fields"].items():
+                # Log multi-line rules that were collected
+                if len(business_rules_collector.get(f"{schema_key}.{field_key}", [])) > 1:
+                    logging.info(f"Multi-line rules collected for {schema_key}.{field_key}: " + 
+                                 f"{len(business_rules_collector.get(f'{schema_key}.{field_key}', []))} lines")
+                    logging.debug(f"Business rules for {schema_key}.{field_key}: {field_data['business_rules']}")
+        
         return extracted_rules
     except Exception as e:
         logging.error(f"Error extracting rules: {e}")
